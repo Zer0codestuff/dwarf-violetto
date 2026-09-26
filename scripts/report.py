@@ -1,5 +1,6 @@
 """Build the report from final measurements and saved answer checks."""
 import json
+import statistics
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -24,6 +25,23 @@ def merged_checks(names):
             "cases": cases}
 
 
+def eos_checks(name):
+    data = read(name)
+    if data.get("output_policy") != "eos_or_context_limit" or not data.get("completed_utc"):
+        raise ValueError(f"Expected a completed evaluation without an artificial output cap: {name}")
+    result = merged_checks([name])
+    rows = list(result["cases"].values())
+    counts = [row["tokens"] for row in rows]
+    result["generation"] = {
+        "total_tokens": sum(counts), "median_tokens": statistics.median(counts),
+        "max_tokens": max(counts), "over_2048": sum(n > 2048 for n in counts),
+        "over_4096": sum(n > 4096 for n in counts),
+        "total_seconds": sum(row["seconds"] for row in rows),
+        "peak_mlx_gb": max(row["peak_mlx_gb"] for row in rows),
+    }
+    return result
+
+
 def main():
     runs = {key: read(file) for key, file in {
         "BF16": "final-bf16-128.json", "Q8 eager": "final-q8-eager-128.json",
@@ -31,8 +49,8 @@ def main():
         "Q4-HQ optimized": "final-q4-hq-128.json",
     }.items()}
     bf, q8 = runs["BF16"]["median"], runs["Q8 optimized"]["median"]
-    bf_math = merged_checks(["bf16-math.json", "bf16-math-4096-retry.json"])
-    q8_math = merged_checks(["q8-math.json", "q8-math-remaining.json"])
+    bf_math = eos_checks("bf16-math-eos.json")
+    q8_math = eos_checks("q8-math-eos.json")
     summary = {"selected": "Q8 optimized", "speedup": q8["decode_tps"] / bf["decode_tps"],
                "memory_reduction": 1-q8["peak_mlx_gb"] / bf["peak_mlx_gb"],
                "bf16_math": bf_math, "q8_math": q8_math,
@@ -85,14 +103,26 @@ def main():
               "Compiled XSA and residual operations matched the unfused Q8 distributions exactly at all 359 positions. Packed prefill projections matched the eager Q8 logits exactly on the runtime test. Earlier packing of full prefill GEMMs changed rounding and was rejected. Single-token decode keeps the packed projections.", "",
               "The cache test crossed the 1025-key local window at position 1100 and preserved the top prediction. An independent PyTorch CPU translation agreed with MLX BF16 on 20 of 21 top predictions, with mean KL 0.001496. This is a limited cross-backend check, not bitwise equivalence with CUDA vLLM.", "",
               "## Mathematical answers", "",
-              f"With up to 4096 output tokens, BF16 completed {12-bf_math['incomplete']}/12 cases and answered {bf_math['correct']}/12 correctly. Q8 completed {12-q8_math['incomplete']}/12 and answered {q8_math['correct']}/12 correctly.", "",
-              "| Case | Expected | BF16 | Q8 |", "| --- | --- | --- | --- |"]
+              f"Fresh runs without an artificial output cap: BF16 completed {12-bf_math['incomplete']}/12 cases at EOS and answered {bf_math['correct']}/12 correctly. Q8 completed {12-q8_math['incomplete']}/12 at EOS and answered {q8_math['correct']}/12 correctly. Only the configured 131072-token context, including the prompt, bounded generation. No time limit or reasoning shortcut was used.", "",
+              "| Case | Expected | BF16 | BF16 tokens | BF16 seconds | Q8 | Q8 tokens | Q8 seconds |",
+              "| --- | --- | --- | ---: | ---: | --- | ---: | ---: |"]
     fixtures=json.loads((ROOT / "data/math_checks.json").read_text())
     for case in fixtures:
         def label(row):
             return "Correct" if row["correct"] else "Incomplete" if row["finish"] != "stop" else "Incorrect"
-        lines.append(f"| {case['id']} | {case['answer']} | {label(bf_math['cases'][case['id']])} | {label(q8_math['cases'][case['id']])} |")
-    lines += ["", "Sampling used temperature 0.6, top-p 0.95 and seed 42 plus the original case index. BF16 responses that hit the initial 2048-token budget were rerun with the same seeds and a 4096-token budget. Eight Q8 cases used the unfused optimized runtime; four used the compiled path. That distinction is retained in the raw records. Compilation equivalence was checked separately.", "",
+        b, q = bf_math['cases'][case['id']], q8_math['cases'][case['id']]
+        lines.append(f"| {case['id']} | {case['answer']} | {label(b)} | {b['tokens']} | {b['seconds']:.1f} | {label(q)} | {q['tokens']} | {q['seconds']:.1f} |")
+    lines += ["", "| Generation measure | BF16 | Q8 |", "| --- | ---: | ---: |"]
+    for title, key, fmt in [("Total tokens", "total_tokens", ".0f"),
+                             ("Median tokens per answer", "median_tokens", ".1f"),
+                             ("Longest answer, tokens", "max_tokens", ".0f"),
+                             ("Answers longer than 4096 tokens", "over_4096", ".0f"),
+                             ("Total elapsed seconds", "total_seconds", ".1f"),
+                             ("Peak MLX allocation, GB", "peak_mlx_gb", ".2f")]:
+        lines.append(f"| {title} | {bf_math['generation'][key]:{fmt}} | {q8_math['generation'][key]:{fmt}} |")
+    lines += ["", "Sampling used the stock MLX-LM sampler with temperature 0.6, top-p 0.95 and seed 42 plus the original case index. Both models reran every problem from a fresh cache. All Q8 cases used packed decode and compiled operations. The evaluator records the actual EOS ID and saves raw completions. Counts include the final EOS token, following MLX-LM's accounting. Elapsed times include the prompt and full response, exclude model loading, and are single runs with different response lengths, not fixed-work speed comparisons.", "",
+              "The earlier capped checks reported 9/12 completed correct BF16 answers and 10/12 Q8 answers. Their remaining answers were truncated, not demonstrated mathematical errors. These EOS runs supersede those quality results; the original records remain available as experiment history.", "",
+              "The [official release article](https://paradigma.inc/blog/limite-1b-violetto/) describes a context of up to 131k tokens. Its current text and evaluation table do not specify mean output tokens per task. The token counts above were measured locally.", "",
               "These 12 hand-authored checks are too small and easy to establish unchanged competition-level mathematical accuracy. They do not justify a claim of zero quality loss. The independent answer-key check corrected one fixture before the final report; saved BF16 completions were regraded without changing their text.", "",
               "## Scope and limitations", "",
               "Only the final-* speed files represent the final benchmark protocol. Earlier files are experiment history, some with different packing and memory-residency settings. The Mac was not otherwise isolated from normal applications. Earlier measurements changed under memory pressure; final runs were sequential with no other project inference process running.", "",

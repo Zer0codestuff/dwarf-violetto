@@ -18,7 +18,7 @@ The environment and checkpoints are already installed on this Mac.
 
 The default is Q8. Each interactive problem is independent, as intended by Violetto. `/quit` exits. Ctrl+C interrupts a generation. The default sampling is temperature 0.6 and top-p 0.95, as recommended by Paradigma. The original mathematical chat template is preserved. Both end tokens stop generation.
 
-Violetto writes long reasoning traces. The default output budget is 4096 tokens; `--max-tokens 8192` increases it. Reaching the limit is reported explicitly. A model answer is not verified merely because generation completed.
+Violetto writes long reasoning traces. Generation now continues until EOS by default, with no artificial output cap. The configured context holds 131072 tokens including the prompt. Exhausting it is reported as `context_limit`, not a completed answer. `--max-tokens 8192` is an optional, explicitly requested cap. A model answer is not verified merely because generation completed.
 
 Generation uses only local weights and tokenizer files. Internet access is needed for initial setup, not for solving problems.
 
@@ -47,12 +47,17 @@ All quantization uses groups of 64. Q6 uses 6-bit projection weights and 8-bit e
 .venv/bin/python -m dwarf_violetto.bench --model models/original --output results/bf16.json
 .venv/bin/python -m dwarf_violetto.bench --model models/q8 --optimized --fused --output results/q8.json
 .venv/bin/python -m dwarf_violetto.bench --model models/q8 --optimized --fused --context 4096 --output results/q8-4096.json
-.venv/bin/python -m dwarf_violetto.evaluate --model models/q8 --optimized --fused --max-tokens 4096 --output results/math.json
+.venv/bin/python -m dwarf_violetto.evaluate --model models/original --output results/bf16-math-eos.json
+.venv/bin/python -m dwarf_violetto.evaluate --model models/q8 --optimized --fused --output results/q8-math-eos.json
 ```
 
 Speed tests use fixed work, a warmup and three repetitions. They ignore EOS deliberately, count 127 decode intervals for 128 generated tokens, and report prompt processing separately from decoding. Prompt throughput includes time to the first token and is not a pure matrix-multiplication metric. The synthetic speed prompt is repeated and cut to the specified token count. Do not infer answer quality from it.
 
 Mathematical checks use the checkpoint chat template, the recommended sampling settings and fixed seeds. All completions are saved. The 12 hand-authored problems are local regression checks, not an AIME score or evidence of unchanged competition-level ability. Token-distribution fidelity is a separate metric.
+
+Run the two evaluations sequentially to avoid GPU contention. They have no output cap or time limit before EOS, other than the model context. The evaluator saves progress every 30 seconds and records the actual stop token, token count, elapsed time and peak MLX allocation. `--resume` skips completed cases and restarts an interrupted case with its original seed. It refuses to mix different code, settings, model configuration or fixtures. Use a different output path for a new run.
+
+The previous 2048/4096-token answer checks are retained as historical, truncated runs. Their completion counts must not be interpreted as mathematical error rates. Fixed-length speed tests still use a token budget so each runtime performs the same amount of work.
 
 For numerical fidelity:
 

@@ -61,24 +61,37 @@ The cache test crossed the 1025-key local window at position 1100 and preserved 
 
 ## Mathematical answers
 
-With up to 4096 output tokens, BF16 completed 9/12 cases and answered 9/12 correctly. Q8 completed 10/12 and answered 10/12 correctly.
+Fresh runs without an artificial output cap: BF16 completed 12/12 cases at EOS and answered 12/12 correctly. Q8 completed 12/12 at EOS and answered 12/12 correctly. Only the configured 131072-token context, including the prompt, bounded generation. No time limit or reasoning shortcut was used.
 
-| Case | Expected | BF16 | Q8 |
-| --- | --- | --- | --- |
-| remainder | 4 | Correct | Correct |
-| divisors | 24 | Correct | Correct |
-| quadratic | 133 | Correct | Correct |
-| geometry | 84 | Correct | Correct |
-| combinatorics | 35 | Correct | Correct |
-| probability | 5/18 | Correct | Correct |
-| diophantine | 15 | Incomplete | Correct |
-| recurrence | 6817 | Correct | Correct |
-| factorial | 313 | Incomplete | Incomplete |
-| lattice | 132 | Incomplete | Incomplete |
-| crt | 23 | Correct | Correct |
-| polynomial | 123 | Correct | Correct |
+| Case | Expected | BF16 | BF16 tokens | BF16 seconds | Q8 | Q8 tokens | Q8 seconds |
+| --- | --- | --- | ---: | ---: | --- | ---: | ---: |
+| remainder | 4 | Correct | 1551 | 51.7 | Correct | 811 | 12.3 |
+| divisors | 24 | Correct | 789 | 26.9 | Correct | 851 | 13.2 |
+| quadratic | 133 | Correct | 750 | 25.6 | Correct | 549 | 8.0 |
+| geometry | 84 | Correct | 722 | 24.7 | Correct | 679 | 9.9 |
+| combinatorics | 35 | Correct | 1730 | 58.4 | Correct | 1950 | 28.6 |
+| probability | 5/18 | Correct | 1243 | 36.1 | Correct | 797 | 11.6 |
+| diophantine | 15 | Correct | 4203 | 108.5 | Correct | 1755 | 25.7 |
+| recurrence | 6817 | Correct | 1019 | 25.9 | Correct | 1023 | 15.0 |
+| factorial | 313 | Correct | 4267 | 109.9 | Correct | 6981 | 102.5 |
+| lattice | 132 | Correct | 7715 | 201.5 | Correct | 6209 | 85.6 |
+| crt | 23 | Correct | 1531 | 39.4 | Correct | 1020 | 13.6 |
+| polynomial | 123 | Correct | 2850 | 74.0 | Correct | 3949 | 53.7 |
 
-Sampling used temperature 0.6, top-p 0.95 and seed 42 plus the original case index. BF16 responses that hit the initial 2048-token budget were rerun with the same seeds and a 4096-token budget. Eight Q8 cases used the unfused optimized runtime; four used the compiled path. That distinction is retained in the raw records. Compilation equivalence was checked separately.
+| Generation measure | BF16 | Q8 |
+| --- | ---: | ---: |
+| Total tokens | 28370 | 26574 |
+| Median tokens per answer | 1541.0 | 1021.5 |
+| Longest answer, tokens | 7715 | 6981 |
+| Answers longer than 4096 tokens | 3 | 2 |
+| Total elapsed seconds | 782.7 | 379.6 |
+| Peak MLX allocation, GB | 2.24 | 1.26 |
+
+Sampling used the stock MLX-LM sampler with temperature 0.6, top-p 0.95 and seed 42 plus the original case index. Both models reran every problem from a fresh cache. All Q8 cases used packed decode and compiled operations. The evaluator records the actual EOS ID and saves raw completions. Counts include the final EOS token, following MLX-LM's accounting. Elapsed times include the prompt and full response, exclude model loading, and are single runs with different response lengths, not fixed-work speed comparisons.
+
+The earlier capped checks reported 9/12 completed correct BF16 answers and 10/12 Q8 answers. Their remaining answers were truncated, not demonstrated mathematical errors. These EOS runs supersede those quality results; the original records remain available as experiment history.
+
+The [official release article](https://paradigma.inc/blog/limite-1b-violetto/) describes a context of up to 131k tokens. Its current text and evaluation table do not specify mean output tokens per task. The token counts above were measured locally.
 
 These 12 hand-authored checks are too small and easy to establish unchanged competition-level mathematical accuracy. They do not justify a claim of zero quality loss. The independent answer-key check corrected one fixture before the final report; saved BF16 completions were regraded without changing their text.
 
