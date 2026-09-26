@@ -1,0 +1,109 @@
+{
+  "settings": {
+    "model": "models/q6",
+    "reference": false,
+    "optimized": true,
+    "output": "results/q6-fidelity.json"
+  },
+  "positions": 359,
+  "cases": [
+    {
+      "id": "remainder",
+      "positions": 29,
+      "kl_mean": 0.0032942136749625206,
+      "kl_max": 0.025060079991817474,
+      "top1_agreement": 0.9310344827586207,
+      "max_logprob_difference": 1.0682039260864258
+    },
+    {
+      "id": "divisors",
+      "positions": 24,
+      "kl_mean": 0.0041370089165866375,
+      "kl_max": 0.027165424078702927,
+      "top1_agreement": 0.9166666666666666,
+      "max_logprob_difference": 1.0682039260864258
+    },
+    {
+      "id": "quadratic",
+      "positions": 28,
+      "kl_mean": 0.0026387404650449753,
+      "kl_max": 0.025060079991817474,
+      "top1_agreement": 0.9642857142857143,
+      "max_logprob_difference": 1.0682039260864258
+    },
+    {
+      "id": "geometry",
+      "positions": 24,
+      "kl_mean": 0.003950335085391998,
+      "kl_max": 0.025060079991817474,
+      "top1_agreement": 0.9583333333333334,
+      "max_logprob_difference": 1.0749397277832031
+    },
+    {
+      "id": "combinatorics",
+      "positions": 24,
+      "kl_mean": 0.006982607766985893,
+      "kl_max": 0.03615181893110275,
+      "top1_agreement": 0.9583333333333334,
+      "max_logprob_difference": 1.0682039260864258
+    },
+    {
+      "id": "probability",
+      "positions": 34,
+      "kl_mean": 0.0050872922874987125,
+      "kl_max": 0.030191097408533096,
+      "top1_agreement": 0.9117647058823529,
+      "max_logprob_difference": 1.1860847473144531
+    },
+    {
+      "id": "diophantine",
+      "positions": 36,
+      "kl_mean": 0.003743286244571209,
+      "kl_max": 0.033806029707193375,
+      "top1_agreement": 0.9722222222222222,
+      "max_logprob_difference": 1.1249656677246094
+    },
+    {
+      "id": "recurrence",
+      "positions": 30,
+      "kl_mean": 0.0037531869020313025,
+      "kl_max": 0.03849225491285324,
+      "top1_agreement": 0.9666666666666667,
+      "max_logprob_difference": 1.084467887878418
+    },
+    {
+      "id": "factorial",
+      "positions": 41,
+      "kl_mean": 0.00497546698898077,
+      "kl_max": 0.028440997004508972,
+      "top1_agreement": 0.926829268292683,
+      "max_logprob_difference": 1.1127958297729492
+    },
+    {
+      "id": "lattice",
+      "positions": 30,
+      "kl_mean": 0.007283793296664953,
+      "kl_max": 0.040583036839962006,
+      "top1_agreement": 0.9666666666666667,
+      "max_logprob_difference": 1.6001644134521484
+    },
+    {
+      "id": "crt",
+      "positions": 29,
+      "kl_mean": 0.006172725930809975,
+      "kl_max": 0.04057575762271881,
+      "top1_agreement": 0.9310344827586207,
+      "max_logprob_difference": 1.0682039260864258
+    },
+    {
+      "id": "polynomial",
+      "positions": 30,
+      "kl_mean": 0.0072883861139416695,
+      "kl_max": 0.08241220563650131,
+      "top1_agreement": 0.9,
+      "max_logprob_difference": 1.4287328720092773
+    }
+  ],
+  "kl_mean": 0.004934780508497714,
+  "top1_agreement": 0.9415041782729805
+}

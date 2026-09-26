@@ -1,0 +1,74 @@
+[
+  {
+    "id": "remainder",
+    "problem": "What is the remainder when 7^2026 is divided by 13?",
+    "answer": "4",
+    "solution": "Since 7^6 is congruent to -1 modulo 13, 7^12 is congruent to 1. The exponent 2026 is congruent to 10 modulo 12. Computing 7^10 modulo 13 gives 4. The answer is \\boxed{4}."
+  },
+  {
+    "id": "divisors",
+    "problem": "How many positive divisors does 360 have?",
+    "answer": "24",
+    "solution": "The prime factorization is 360 = 2^3 * 3^2 * 5. Its number of positive divisors is (3+1)(2+1)(1+1) = 24. The answer is \\boxed{24}."
+  },
+  {
+    "id": "quadratic",
+    "problem": "The roots of x^2 - 7x + 10 = 0 are a and b. Find a^3 + b^3.",
+    "answer": "133",
+    "solution": "By Vieta, a+b=7 and ab=10. Thus a^3+b^3=(a+b)^3-3ab(a+b)=343-210=133. The answer is \\boxed{133}."
+  },
+  {
+    "id": "geometry",
+    "problem": "A triangle has side lengths 13, 14, and 15. What is its area?",
+    "answer": "84",
+    "solution": "The semiperimeter is 21. Heron's formula gives the area sqrt(21*8*7*6)=sqrt(7056)=84. The answer is \\boxed{84}."
+  },
+  {
+    "id": "combinatorics",
+    "problem": "How many binary strings of length 10 contain exactly four ones, with no two ones adjacent?",
+    "answer": "35",
+    "solution": "Place four ones with a mandatory zero between consecutive ones. Removing those three mandatory zeros reduces the choice to selecting four positions among seven. The count is binomial(7,4)=35. The answer is \\boxed{35}."
+  },
+  {
+    "id": "probability",
+    "problem": "Two fair six-sided dice are rolled. Given that their sum is even, what is the probability that their sum is 8? Give a reduced fraction.",
+    "answer": "5/18",
+    "solution": "An even sum requires matching parity. There are 3*3+3*3=18 equally likely outcomes. The outcomes summing to 8 are (2,6),(3,5),(4,4),(5,3),(6,2), so the conditional probability is 5/18. The answer is \\boxed{\\frac{5}{18}}."
+  },
+  {
+    "id": "diophantine",
+    "problem": "How many ordered pairs of positive integers (x,y) satisfy 1/x + 1/y = 1/12?",
+    "answer": "15",
+    "solution": "Multiplying gives 12x+12y=xy, hence (x-12)(y-12)=144. Positivity forces x and y to exceed 12. Each positive divisor of 144 gives one ordered pair. Since 144=2^4*3^2, there are 5*3=15 divisors. The answer is \\boxed{15}."
+  },
+  {
+    "id": "recurrence",
+    "problem": "Let a_0=2, a_1=5, and a_n=5a_(n-1)-6a_(n-2) for n>=2. Find a_8.",
+    "answer": "6817",
+    "solution": "The characteristic roots are 2 and 3. Initial values give a_n=2^n+3^n. Therefore a_8=256+6561=6817. The answer is \\boxed{6817}."
+  },
+  {
+    "id": "factorial",
+    "problem": "What are the last three digits of 1! + 2! + 3! + ... + 20!?",
+    "answer": "313",
+    "solution": "For n>=15, n! is divisible by 1000. The sum through 9! is 409113, congruent to 113. The residues for 10!,11!,12!,13!,14! are 800,800,600,800,200. Their sum is 3200. The final residue is 313. The answer is \\boxed{313}."
+  },
+  {
+    "id": "lattice",
+    "problem": "How many paths from (0,0) to (6,6), using only steps (1,0) or (0,1), never go above the line y=x?",
+    "answer": "132",
+    "solution": "These paths are counted by the sixth Catalan number. Reflection subtracts binomial(12,5) from binomial(12,6), giving 924-792=132. The answer is \\boxed{132}."
+  },
+  {
+    "id": "crt",
+    "problem": "Find the smallest positive integer n such that n is congruent to 2 modulo 3, 3 modulo 5, and 2 modulo 7.",
+    "answer": "23",
+    "solution": "The first and third congruences imply n=2+21k. Modulo 5 this is 2+k=3, hence k=1 modulo 5. The smallest positive solution is 23. The answer is \\boxed{23}."
+  },
+  {
+    "id": "polynomial",
+    "problem": "Let x be a real number satisfying x + 1/x = 3. Find x^5 + 1/x^5.",
+    "answer": "123",
+    "solution": "Set S_n=x^n+x^(-n). Then S_0=2, S_1=3 and S_n=3S_(n-1)-S_(n-2). Successive values are 7,18,47,123. The answer is \\boxed{123}."
+  }
+]

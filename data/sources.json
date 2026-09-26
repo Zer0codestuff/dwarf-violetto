@@ -1,0 +1,11 @@
+{
+  "model_revision": "9402e422e87b220507963cd42c997459c1e87b43",
+  "upstream_revision": "d9f8fea11c79d596bd8c8bbff4b78020b2d01ad6",
+  "port_revision": "ffa57c444fafdba0019c55d4f502bc6b9ddcc123",
+  "sha256": {
+    "model_config": "52a6a80ffd369638f4cc522ad728735d29bcda7cce1ecb5096947e10c1ee8bc0",
+    "upstream_components": "abcf16ed565f738d8220c97892fc16655d02355774eb5b97d4cc47ded31caa77",
+    "upstream_modeling": "838b0ca6332739cc14a94bc3c1452818b64c2e9bcbde9d939dc8ef28fc80c78f",
+    "port": "3861dfc4286edbd6016bea7a31cb708657cead1557d8b5107c62c6e20a4709c1"
+  }
+}

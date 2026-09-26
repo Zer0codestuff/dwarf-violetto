@@ -1,0 +1,126 @@
+{
+  "settings": {
+    "model": "models/q8",
+    "reference": false,
+    "optimized": true,
+    "fused": true,
+    "output": "results/fusion-fidelity.json",
+    "reference_dir": "results/q8-reference"
+  },
+  "sha256": {
+    "dwarf_violetto/__init__.py": "ac66e8b3bf150afc5b97134a197d233a29ea7035b5e55219e25969a91de76420",
+    "dwarf_violetto/__main__.py": "45959113f0ee0ce90835b30ca10402c799ef06f9a7e5d296843e96d6632f1f0d",
+    "dwarf_violetto/bench.py": "5e918db2a2bd115ac14c414e5d521e37c81597407b1e0309c0549e1be5ccfeb4",
+    "dwarf_violetto/evaluate.py": "49025b801d38bc27fb7463fb5f6d686baaf16686fd512d7d313ebd4e335e01c7",
+    "dwarf_violetto/fidelity.py": "0d57fd828c51d51270626e674c7540a0133b2ccc6b09de4d78ba8abea87ed413",
+    "dwarf_violetto/fused.py": "5a5380401f1cf246e1fc6648d49d368d2208d71331461d98baccdc8ba5029065",
+    "dwarf_violetto/limite.py": "dc4ba48e149e8852be8fd54c1eba54d1663942e7d96786f26c743cae642e8b42",
+    "dwarf_violetto/optimize.py": "4aa81bc7932fc48931500b516b8b3006e166066489354930b50ff5417b0aca16",
+    "dwarf_violetto/prepare.py": "1346f57e60d78efd5ff235a73b48032b4607cd17593c4ae97e67a14527331903",
+    "dwarf_violetto/provenance.py": "006f95ce46102206fd8658a20d1f6cee616b4ade8194da20a7ad54b926f76c1a",
+    "dwarf_violetto/runtime.py": "bb7bf2a03a1520f8b347e144d537160b47668b43016c6ec0c9fdb90d270e71bc",
+    "data/math_checks.json": "3ce3941747571ce3dc5eb6c1210cc345d7dc601bfb43864e7b4bd43420e017a8",
+    "models/q8/config.json": "80b8bcc33f0449642fec131b4c2856bbf57e08e9a008340c8e20d9fd3be530e7"
+  },
+  "positions": 359,
+  "cases": [
+    {
+      "id": "remainder",
+      "positions": 29,
+      "kl_mean": 0.0,
+      "kl_max": 0.0,
+      "top1_agreement": 1.0,
+      "max_logprob_difference": 0.0
+    },
+    {
+      "id": "divisors",
+      "positions": 24,
+      "kl_mean": 0.0,
+      "kl_max": 0.0,
+      "top1_agreement": 1.0,
+      "max_logprob_difference": 0.0
+    },
+    {
+      "id": "quadratic",
+      "positions": 28,
+      "kl_mean": 0.0,
+      "kl_max": 0.0,
+      "top1_agreement": 1.0,
+      "max_logprob_difference": 0.0
+    },
+    {
+      "id": "geometry",
+      "positions": 24,
+      "kl_mean": 0.0,
+      "kl_max": 0.0,
+      "top1_agreement": 1.0,
+      "max_logprob_difference": 0.0
+    },
+    {
+      "id": "combinatorics",
+      "positions": 24,
+      "kl_mean": 0.0,
+      "kl_max": 0.0,
+      "top1_agreement": 1.0,
+      "max_logprob_difference": 0.0
+    },
+    {
+      "id": "probability",
+      "positions": 34,
+      "kl_mean": 0.0,
+      "kl_max": 0.0,
+      "top1_agreement": 1.0,
+      "max_logprob_difference": 0.0
+    },
+    {
+      "id": "diophantine",
+      "positions": 36,
+      "kl_mean": 0.0,
+      "kl_max": 0.0,
+      "top1_agreement": 1.0,
+      "max_logprob_difference": 0.0
+    },
+    {
+      "id": "recurrence",
+      "positions": 30,
+      "kl_mean": 0.0,
+      "kl_max": 0.0,
+      "top1_agreement": 1.0,
+      "max_logprob_difference": 0.0
+    },
+    {
+      "id": "factorial",
+      "positions": 41,
+      "kl_mean": 0.0,
+      "kl_max": 0.0,
+      "top1_agreement": 1.0,
+      "max_logprob_difference": 0.0
+    },
+    {
+      "id": "lattice",
+      "positions": 30,
+      "kl_mean": 0.0,
+      "kl_max": 0.0,
+      "top1_agreement": 1.0,
+      "max_logprob_difference": 0.0
+    },
+    {
+      "id": "crt",
+      "positions": 29,
+      "kl_mean": 0.0,
+      "kl_max": 0.0,
+      "top1_agreement": 1.0,
+      "max_logprob_difference": 0.0
+    },
+    {
+      "id": "polynomial",
+      "positions": 30,
+      "kl_mean": 0.0,
+      "kl_max": 0.0,
+      "top1_agreement": 1.0,
+      "max_logprob_difference": 0.0
+    }
+  ],
+  "kl_mean": 0.0,
+  "top1_agreement": 1.0
+}

@@ -1,0 +1,21 @@
+{
+  "model_parameters": 1035254176,
+  "tensor_count": 743,
+  "checkpoint_bytes": 2070811520,
+  "hardware": {
+    "chip": "Apple M4",
+    "cpu_cores": 10,
+    "performance_cpu_cores": 4,
+    "efficiency_cpu_cores": 6,
+    "gpu_cores": 10,
+    "memory_bytes": 17179869184,
+    "model": "MacBook Pro Mac16,1"
+  },
+  "os": {
+    "version": "27.0",
+    "build": "26A428"
+  },
+  "power": "AC, battery 100% at start",
+  "measured_on": "2026-09-25",
+  "network_needed_for_inference": false
+}
