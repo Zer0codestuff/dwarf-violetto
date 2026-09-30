@@ -1,0 +1,90 @@
+{
+  "sha256": {
+    "dwarf_violetto/__init__.py": "ac66e8b3bf150afc5b97134a197d233a29ea7035b5e55219e25969a91de76420",
+    "dwarf_violetto/__main__.py": "8fbf40ca824129feb1c1d5dda92c7049632f4faad995111df2fb35b2f19569a5",
+    "dwarf_violetto/bench.py": "6bf7012d324ae4530b4d2a3833258d39cf486b675a1005929eef1b971a47306d",
+    "dwarf_violetto/evaluate.py": "146f3ed0a910888fe4acbf361e4c590528a112938ee9d76d35761aa04ecfc62d",
+    "dwarf_violetto/fidelity.py": "0d57fd828c51d51270626e674c7540a0133b2ccc6b09de4d78ba8abea87ed413",
+    "dwarf_violetto/fused.py": "36f469738bf8e38c40fca4aa130be7b0dcae19cb458a14c66a37ae8929bbb6fc",
+    "dwarf_violetto/generation.py": "afca6285713f0ac0002af093ea3317101b068dcb116fa3e8fef6d350a3e94ea2",
+    "dwarf_violetto/limite.py": "dc4ba48e149e8852be8fd54c1eba54d1663942e7d96786f26c743cae642e8b42",
+    "dwarf_violetto/optimize.py": "4aa81bc7932fc48931500b516b8b3006e166066489354930b50ff5417b0aca16",
+    "dwarf_violetto/prepare.py": "1346f57e60d78efd5ff235a73b48032b4607cd17593c4ae97e67a14527331903",
+    "dwarf_violetto/provenance.py": "006f95ce46102206fd8658a20d1f6cee616b4ade8194da20a7ad54b926f76c1a",
+    "dwarf_violetto/runtime.py": "60de97d0bb3e83469e287802edc23ed3d49d5542d52976b9b23ac6ca50021df8",
+    "dwarf_violetto/sampling.py": "ec633e772824541dad22419b497a7e8975e66987d960afdafdf5ed7c37b0e93a",
+    "data/math_checks.json": "3ce3941747571ce3dc5eb6c1210cc345d7dc601bfb43864e7b4bd43420e017a8",
+    "models/q8/config.json": "80b8bcc33f0449642fec131b4c2856bbf57e08e9a008340c8e20d9fd3be530e7"
+  },
+  "method": "Eight forced decode steps per context. Synchronize after each component. Instrumentation changes scheduling; component times are diagnostic, not production throughput. Long contexts repeat a saved mathematical trace.",
+  "contexts": [
+    {
+      "context": 128,
+      "instrumented_ms_per_token": 48.148953123018146,
+      "component_ms_per_token": {
+        "Attention": 18.13369186129421,
+        "MLP": 18.438656232319772,
+        "MuddMixer": 1.0261929928674363,
+        "sampler": 1.5377187519334257
+      },
+      "calls_per_token": {
+        "Attention": 48.0,
+        "MLP": 48.0,
+        "MuddMixer": 4.0,
+        "sampler": 1.0
+      },
+      "peak_mlx_gb": 1.464612132
+    },
+    {
+      "context": 8192,
+      "instrumented_ms_per_token": 63.850026002910454,
+      "component_ms_per_token": {
+        "Attention": 30.479542576358654,
+        "MLP": 20.845636383455712,
+        "MuddMixer": 1.2216042596264742,
+        "sampler": 0.8327447576448321
+      },
+      "calls_per_token": {
+        "Attention": 48.0,
+        "MLP": 48.0,
+        "MuddMixer": 4.0,
+        "sampler": 1.0
+      },
+      "peak_mlx_gb": 1.625089659
+    },
+    {
+      "context": 16384,
+      "instrumented_ms_per_token": 53.74703125562519,
+      "component_ms_per_token": {
+        "Attention": 23.843411858251784,
+        "MLP": 19.050213253649417,
+        "MuddMixer": 0.9626507016946562,
+        "sampler": 0.7002498750807717
+      },
+      "calls_per_token": {
+        "Attention": 48.0,
+        "MLP": 48.0,
+        "MuddMixer": 4.0,
+        "sampler": 1.0
+      },
+      "peak_mlx_gb": 1.750918779
+    },
+    {
+      "context": 32768,
+      "instrumented_ms_per_token": 372.7069322485477,
+      "component_ms_per_token": {
+        "Attention": 203.57118784158956,
+        "MLP": 68.15850218845299,
+        "MuddMixer": 3.4518536122050136,
+        "sampler": 2.314645862497855
+      },
+      "calls_per_token": {
+        "Attention": 48.0,
+        "MLP": 48.0,
+        "MuddMixer": 4.0,
+        "sampler": 1.0
+      },
+      "peak_mlx_gb": 1.967369707
+    }
+  ]
+}

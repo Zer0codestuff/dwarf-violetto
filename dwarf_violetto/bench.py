@@ -14,6 +14,7 @@ from mlx_lm.generate import generate_step, generation_stream, wired_limit
 from mlx_lm.sample_utils import make_sampler
 from .runtime import load, prompt_tokens
 from .provenance import provenance
+from .generation import validate_sampling
 
 
 def measure(model, tokens, count, chunk, sampler=None, seed=42):
@@ -62,9 +63,15 @@ def main():
     p.add_argument("--fast-sampler", action="store_true")
     p.add_argument("--output", required=True)
     args = p.parse_args()
-    if args.tokens < 2 or args.repeat < 1 or args.context < 1:
-        p.error("Use at least 2 output tokens, 1 repetition and 1 context token")
+    if args.tokens < 2 or args.repeat < 1 or args.context < 1 or args.chunk < 1:
+        p.error("Use at least 2 output tokens, 1 repetition, 1 context token and a positive prefill chunk")
+    try:
+        validate_sampling(args.temp, args.top_p)
+    except ValueError as error:
+        p.error(str(error))
     model, tokenizer, _ = load(args.model, args.optimized, args.fused)
+    if args.context + max(args.tokens, 16) > model.args.max_position_embeddings:
+        p.error("The prompt and output budget exceed the configured model context")
     ids = prompt_tokens(tokenizer, "Find all positive integers n such that n squared plus 3n plus 2 is divisible by 12. Explain each step.")
     ids = (ids * ((args.context // len(ids)) + 1))[:args.context]
     if args.fast_sampler:
@@ -79,7 +86,7 @@ def main():
         runs.append(row)
         print(f"{i + 1}: prefill={row['prompt_tps']:.1f} decode={row['decode_tps']:.1f} tok/s peak={row['peak_mlx_gb']:.2f} GB", flush=True)
     result = {"timestamp": datetime.now(timezone.utc).isoformat(),
-              "platform": platform.platform(), "chip": "Apple M4, 10-core GPU, 16 GB",
+              "platform": platform.platform(), "device": mx.device_info(),
               "system_memory": {"available_gb": psutil.virtual_memory().available / 1e9,
                                 "swap_used_gb": psutil.swap_memory().used / 1e9},
               "packages": {x: version(x) for x in ["mlx", "mlx-lm", "transformers"]},

@@ -1,0 +1,12 @@
+{
+  "positions": 359,
+  "top_p": 0.95,
+  "temperature": 0.6,
+  "seeds": [
+    0,
+    42,
+    123
+  ],
+  "exact_filter_match": true,
+  "exact_token_match": true
+}

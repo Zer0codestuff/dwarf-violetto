@@ -1,0 +1,208 @@
+{
+  "settings": {
+    "model": "models/q6",
+    "reference": false,
+    "optimized": true,
+    "fused": true,
+    "output": "results/publication-q6-fidelity.json",
+    "reference_dir": "results/publication-bf16-reference"
+  },
+  "sha256": {
+    "dwarf_violetto/__init__.py": "ac66e8b3bf150afc5b97134a197d233a29ea7035b5e55219e25969a91de76420",
+    "dwarf_violetto/__main__.py": "83a42c414e5da47d25d77f0fcd29c5314a3d0520f48b6e7f8c381bc5f4d800d9",
+    "dwarf_violetto/bench.py": "67464bba36eae7b5788813af5153aa05e2a4f179388d9a47202f8bee451d4aef",
+    "dwarf_violetto/checkpoint.py": "613634e82c3464a27eef8233fb35f509ec0236d8486b31329781fc2c04dd223f",
+    "dwarf_violetto/evaluate.py": "9f95a3917f51c363f16235c582af56228d0c29d1363ed2f57cb34c0ef4ba6ed8",
+    "dwarf_violetto/evaluation_state.py": "3c936c17304401b6769d2aa4e9880ca22fa656b5ac7b97b5549a2555f509775f",
+    "dwarf_violetto/fidelity.py": "1b154429a29a798f42577dea3539761c7a77d2db0d572c6ff593de2bc0b09ff0",
+    "dwarf_violetto/fused.py": "36f469738bf8e38c40fca4aa130be7b0dcae19cb458a14c66a37ae8929bbb6fc",
+    "dwarf_violetto/generation.py": "ccc64cb4988c1579f401a47c845e64ccbcd69ba4514d7070b13519a720334899",
+    "dwarf_violetto/grading.py": "e5065f9f2bae9a5ac916b0bf1ad164c810ef87bb20f2cdfcf34f89b34c4d4900",
+    "dwarf_violetto/kernels.py": "8b7b25575f9b9c6b1548f52d6847890e5a92f28039cbf48523573c4033fdca3a",
+    "dwarf_violetto/limite.py": "83ea361c250d8ec25b0243a3399f371593184911140183adccdaa32707ddbeab",
+    "dwarf_violetto/optimize.py": "4aa81bc7932fc48931500b516b8b3006e166066489354930b50ff5417b0aca16",
+    "dwarf_violetto/prepare.py": "2bfbbe4757cae0b41f4195549cd618e969a131b05417157df53891aa1fcfa1e3",
+    "dwarf_violetto/provenance.py": "ae9aebc229be3a00326558225932464a80fb956055c8bff57d06810961de0c4d",
+    "dwarf_violetto/runtime.py": "2e1df84b610b2b2b4c413efe329eb2ead1203646307705caee90a4f754658785",
+    "dwarf_violetto/sampling.py": "ec633e772824541dad22419b497a7e8975e66987d960afdafdf5ed7c37b0e93a",
+    "data/math_checks.json": "3ce3941747571ce3dc5eb6c1210cc345d7dc601bfb43864e7b4bd43420e017a8",
+    "requirements.lock": "87a0626c32a9bce604377fdea5ff0efc9c6918a90e1929474c9f52014c15028e",
+    "models/q6/chat_template.jinja": "0c4e2c299b0bd80a20f53ec55f9b7f8db418e037c378289ce707a038cd34e2de",
+    "models/q6/config.json": "7a2983079b87c6b80e0a509144dfc0107978e8d90ec26b70613a3ed9eb05aaee",
+    "models/q6/generation_config.json": "f760bbfcfec910437e242b36b2014f8a8fba47b7102915a05094d4b4aa1181a6",
+    "models/q6/model.safetensors.index.json": "ceaa7bca18b99f078aced232316c31aa23dd2a462e9bef6f7f83d6ef4d1453d2",
+    "models/q6/source.json": "db8fa7b171f3946991399f66e1f3831cfe450d03816e284e04935b649d694326",
+    "models/q6/special_tokens_map.json": "6676f091c8bc4d1b50146427cfde92073402866b87b6e39223227931b70083e9",
+    "models/q6/tokenizer.json": "296e081e2f5ecf9d87814aa9b0f4b12d670ed2b2e2be6c84e01a9466c953afb7",
+    "models/q6/tokenizer_config.json": "d36abf9716797c95779c0b81eb8978e5b5356b067546d94d58bb4975d01139b0",
+    "models/q6/model.safetensors": "fcc555a8e09b8c9ffd8a148099fe2d93f4e26f53fecef223ced1bf0eeac7b349"
+  },
+  "positions": 359,
+  "cases": [
+    {
+      "id": "remainder",
+      "positions": 29,
+      "kl_mean": 0.003898903727531433,
+      "kl_max": 0.0407552644610405,
+      "top1_agreement": 0.9310344827586207,
+      "max_logprob_difference": 1.0926198959350586
+    },
+    {
+      "id": "divisors",
+      "positions": 24,
+      "kl_mean": 0.003919587936252356,
+      "kl_max": 0.03693772479891777,
+      "top1_agreement": 0.9166666666666666,
+      "max_logprob_difference": 1.0926198959350586
+    },
+    {
+      "id": "quadratic",
+      "positions": 28,
+      "kl_mean": 0.0026260875165462494,
+      "kl_max": 0.022135920822620392,
+      "top1_agreement": 0.9642857142857143,
+      "max_logprob_difference": 1.0926198959350586
+    },
+    {
+      "id": "geometry",
+      "positions": 24,
+      "kl_mean": 0.003662506816908717,
+      "kl_max": 0.022135920822620392,
+      "top1_agreement": 0.9583333333333334,
+      "max_logprob_difference": 1.0926198959350586
+    },
+    {
+      "id": "combinatorics",
+      "positions": 24,
+      "kl_mean": 0.0062947398982942104,
+      "kl_max": 0.03256938233971596,
+      "top1_agreement": 0.9583333333333334,
+      "max_logprob_difference": 1.1434335708618164
+    },
+    {
+      "id": "probability",
+      "positions": 34,
+      "kl_mean": 0.004702113103121519,
+      "kl_max": 0.02352134697139263,
+      "top1_agreement": 0.9117647058823529,
+      "max_logprob_difference": 1.0926198959350586
+    },
+    {
+      "id": "diophantine",
+      "positions": 36,
+      "kl_mean": 0.003542915917932987,
+      "kl_max": 0.022135920822620392,
+      "top1_agreement": 0.9722222222222222,
+      "max_logprob_difference": 1.0926198959350586
+    },
+    {
+      "id": "recurrence",
+      "positions": 30,
+      "kl_mean": 0.003847669344395399,
+      "kl_max": 0.04779970645904541,
+      "top1_agreement": 0.9666666666666667,
+      "max_logprob_difference": 1.0926198959350586
+    },
+    {
+      "id": "factorial",
+      "positions": 41,
+      "kl_mean": 0.004536515101790428,
+      "kl_max": 0.027326982468366623,
+      "top1_agreement": 0.9512195121951219,
+      "max_logprob_difference": 1.0926198959350586
+    },
+    {
+      "id": "lattice",
+      "positions": 30,
+      "kl_mean": 0.0070098768919706345,
+      "kl_max": 0.0360790491104126,
+      "top1_agreement": 0.9666666666666667,
+      "max_logprob_difference": 1.7122173309326172
+    },
+    {
+      "id": "crt",
+      "positions": 29,
+      "kl_mean": 0.0056548211723566055,
+      "kl_max": 0.04367925971746445,
+      "top1_agreement": 0.9310344827586207,
+      "max_logprob_difference": 1.0926198959350586
+    },
+    {
+      "id": "polynomial",
+      "positions": 30,
+      "kl_mean": 0.007448725868016481,
+      "kl_max": 0.06776639074087143,
+      "top1_agreement": 0.9,
+      "max_logprob_difference": 1.3681116104125977
+    }
+  ],
+  "reference_sha256": {
+    "results/publication-bf16-reference/reference-geometry.npz": "5005f4900fd18044b33114c501044e05845caefa05db0b973a74a1d85fe9733a",
+    "results/publication-bf16-reference/reference-remainder.npz": "d9f14dcc4fdfdb76fce32ce9acb75910ed3eac45fef90156a7547e79c8835732",
+    "results/publication-bf16-reference/reference-polynomial.npz": "8c3ff000a6673ad1f4443add412d8f2ddaae313898e2e110ef1ef4bdfd5cd647",
+    "results/publication-bf16-reference/reference-recurrence.npz": "c0f1dd37a26ce7094df4197c65ba21ab8c3fea94698029fb6e2d304c3c9f0d7e",
+    "results/publication-bf16-reference/reference-crt.npz": "34d605d07d4c6b775440aad943da50ff535a9ddcaeecb48e46102d18136dc53b",
+    "results/publication-bf16-reference/reference-factorial.npz": "8d470b8d77e4a994c343cdb6d5fbc2efd13c8552d5a72694a6ea73fa4b9dc0fb",
+    "results/publication-bf16-reference/reference-combinatorics.npz": "e954b566013440ad874a539e196291560c53f5c5f2c375829e96eb0610069eda",
+    "results/publication-bf16-reference/reference-quadratic.npz": "7958c4a7fab5037c1ebc82dcf7bf042f3c9b7fcc265998b1ba802bc6b4b41433",
+    "results/publication-bf16-reference/reference-diophantine.npz": "3fdbab21844c10c797639cc3da2a52b9c364d659b5d226c3458bd3ce32df17e8",
+    "results/publication-bf16-reference/reference-probability.npz": "a926c5722e55881c65130e5de075b88e1257d2ebacb65d6b0f57a1438c96a8c5",
+    "results/publication-bf16-reference/reference-lattice.npz": "312d86f1e51586f04ab9e0cd864b4ed908f1580d45e73b1697d389b69bf94aaf",
+    "results/publication-bf16-reference/reference-divisors.npz": "a1aeb5a759cd112117f0c78814d9d22ccea851950ef06dbb24bb7125669d0263"
+  },
+  "kl_mean": 0.004752742632455647,
+  "top1_agreement": 0.9442896935933147,
+  "reference_provenance": {
+    "sha256": {
+      "dwarf_violetto/__init__.py": "ac66e8b3bf150afc5b97134a197d233a29ea7035b5e55219e25969a91de76420",
+      "dwarf_violetto/__main__.py": "83a42c414e5da47d25d77f0fcd29c5314a3d0520f48b6e7f8c381bc5f4d800d9",
+      "dwarf_violetto/bench.py": "67464bba36eae7b5788813af5153aa05e2a4f179388d9a47202f8bee451d4aef",
+      "dwarf_violetto/checkpoint.py": "613634e82c3464a27eef8233fb35f509ec0236d8486b31329781fc2c04dd223f",
+      "dwarf_violetto/evaluate.py": "9f95a3917f51c363f16235c582af56228d0c29d1363ed2f57cb34c0ef4ba6ed8",
+      "dwarf_violetto/evaluation_state.py": "3c936c17304401b6769d2aa4e9880ca22fa656b5ac7b97b5549a2555f509775f",
+      "dwarf_violetto/fidelity.py": "1b154429a29a798f42577dea3539761c7a77d2db0d572c6ff593de2bc0b09ff0",
+      "dwarf_violetto/fused.py": "36f469738bf8e38c40fca4aa130be7b0dcae19cb458a14c66a37ae8929bbb6fc",
+      "dwarf_violetto/generation.py": "ccc64cb4988c1579f401a47c845e64ccbcd69ba4514d7070b13519a720334899",
+      "dwarf_violetto/grading.py": "e5065f9f2bae9a5ac916b0bf1ad164c810ef87bb20f2cdfcf34f89b34c4d4900",
+      "dwarf_violetto/kernels.py": "8b7b25575f9b9c6b1548f52d6847890e5a92f28039cbf48523573c4033fdca3a",
+      "dwarf_violetto/limite.py": "83ea361c250d8ec25b0243a3399f371593184911140183adccdaa32707ddbeab",
+      "dwarf_violetto/optimize.py": "4aa81bc7932fc48931500b516b8b3006e166066489354930b50ff5417b0aca16",
+      "dwarf_violetto/prepare.py": "2bfbbe4757cae0b41f4195549cd618e969a131b05417157df53891aa1fcfa1e3",
+      "dwarf_violetto/provenance.py": "ae9aebc229be3a00326558225932464a80fb956055c8bff57d06810961de0c4d",
+      "dwarf_violetto/runtime.py": "2e1df84b610b2b2b4c413efe329eb2ead1203646307705caee90a4f754658785",
+      "dwarf_violetto/sampling.py": "ec633e772824541dad22419b497a7e8975e66987d960afdafdf5ed7c37b0e93a",
+      "data/math_checks.json": "3ce3941747571ce3dc5eb6c1210cc345d7dc601bfb43864e7b4bd43420e017a8",
+      "requirements.lock": "87a0626c32a9bce604377fdea5ff0efc9c6918a90e1929474c9f52014c15028e",
+      "models/original/chat_template.jinja": "0c4e2c299b0bd80a20f53ec55f9b7f8db418e037c378289ce707a038cd34e2de",
+      "models/original/config.json": "52a6a80ffd369638f4cc522ad728735d29bcda7cce1ecb5096947e10c1ee8bc0",
+      "models/original/generation_config.json": "f760bbfcfec910437e242b36b2014f8a8fba47b7102915a05094d4b4aa1181a6",
+      "models/original/source.json": "db8fa7b171f3946991399f66e1f3831cfe450d03816e284e04935b649d694326",
+      "models/original/special_tokens_map.json": "6676f091c8bc4d1b50146427cfde92073402866b87b6e39223227931b70083e9",
+      "models/original/tokenizer.json": "296e081e2f5ecf9d87814aa9b0f4b12d670ed2b2e2be6c84e01a9466c953afb7",
+      "models/original/tokenizer_config.json": "d36abf9716797c95779c0b81eb8978e5b5356b067546d94d58bb4975d01139b0",
+      "models/original/model.safetensors": "9dc7e89e30acf473629f98ac3ade535fb05cc044fe7e399b78d0bc957283a5f5"
+    },
+    "settings": {
+      "model": "models/original",
+      "reference": true,
+      "optimized": false,
+      "fused": false,
+      "output": "results/fidelity.json",
+      "reference_dir": "results/publication-bf16-reference"
+    },
+    "cases": [
+      "remainder",
+      "divisors",
+      "quadratic",
+      "geometry",
+      "combinatorics",
+      "probability",
+      "diophantine",
+      "recurrence",
+      "factorial",
+      "lattice",
+      "crt",
+      "polynomial"
+    ]
+  }
+}

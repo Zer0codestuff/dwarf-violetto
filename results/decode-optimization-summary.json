@@ -1,0 +1,40 @@
+{
+  "date": "2026-09-30",
+  "selected": "Existing Q8 runtime",
+  "additional_default_optimization": false,
+  "decision": "Keep the existing Q8 default. The additional candidates did not establish a clear throughput benefit across the tested contexts. Compiled RoPE measured +0.5% at 128 prompt tokens, +0.9% at 8192 and -1.1% at 32768. These small changes overlap run variation. At 128 prompt tokens and 512 generated tokens, compiled RoPE reduced process CPU time by 6.5%, including prefill. RoPE, MUDD, the custom Metal kernel and MLP compilation remain reversible experiments.",
+  "comparisons": [
+    "paired-decode-settled-128.json",
+    "paired-decode-settled-8192.json",
+    "paired-decode-settled-32768.json",
+    "decode-metal-mlp-refreshed.json"
+  ],
+  "excluded_speed_files": [
+    "paired-decode-refreshed-128.json",
+    "paired-decode-confirmed-128.json",
+    "paired-decode-idle-128.json"
+  ],
+  "throughput_change": {
+    "128": 0.005141102241618345,
+    "8192": 0.008908489153213406,
+    "32768": -0.01121113372803162
+  },
+  "cpu_seconds_128": {
+    "baseline": 4.719358464,
+    "compiled_rope": 4.413982847999998
+  },
+  "cpu_reduction_128": 0.06470701861904637,
+  "correctness": "decode-candidate-correctness.json",
+  "exact_forced_decode_positions": 960,
+  "quality_scope": "Exactness on the tested prefixes and identical sampled traces do not establish competition-level mathematical accuracy.",
+  "profiler": "decode-profile-cleared.json",
+  "limitations": "Normal desktop applications were not isolated. GPU snapshots are point samples, not continuous utilization or power measurements. GPU frequency and power require privileges that were not available. Variable earlier runs are retained but excluded from default selection.",
+  "feasibility_pilot": {
+    "source": "throughput-feasibility.json",
+    "batch_4_aggregate_tps": 212.90012134024556,
+    "batch_4_ratio": 3.499831424745179,
+    "verification_8_target_cost_ratio": 5.334050653318748,
+    "local_cache_trimmable": true,
+    "scope": "Synchronous short-prefix forced work without sampling. Full logits changed; no batch evaluator or MTP decoder was enabled."
+  }
+}

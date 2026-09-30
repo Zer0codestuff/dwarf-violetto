@@ -1,0 +1,8 @@
+{
+  "completed_case_preserved": true,
+  "duplicate_cases": false,
+  "different_seed_rejected": true,
+  "original_case_seed": 43,
+  "finish": "stop",
+  "correct": true
+}

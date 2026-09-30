@@ -1,5 +1,6 @@
 """Focused checks for numerical packing, tokenizer, and the local window."""
 import json
+import argparse
 from pathlib import Path
 import mlx.core as mx
 import numpy as np
@@ -24,6 +25,9 @@ def last_logits(model, ids, cache=None):
 
 
 def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--output", default="results/correctness.json")
+    args = parser.parse_args()
     model, tokenizer, _ = load("models/q8")
     raw = Tokenizer.from_file("models/original/tokenizer.json")
     text = "Solve 7^2026 mod 13.\nα + β = 3; perché?"
@@ -35,7 +39,7 @@ def main():
     after = model(mx.array([ids]))
     mx.eval(after)
     packing = distribution(before, after)
-    assert packing["top1"] >= 0.98 and packing["kl"] < 0.001, packing
+    assert packing["max_abs"] == 0, packing
     for layer in model.layers:
         layer.self_attn._fused_xsa = xsa
         layer._fused_residual = residual
@@ -49,10 +53,13 @@ def main():
     full = last_logits(model, long_ids)
     mx.eval(full)
     cache = model.make_cache()
+    initial_trimmable = all(c.is_trimmable() for c in cache)
+    assert initial_trimmable
     for start in range(0, 1097, 256):
         stop = min(start+256,1097)
         last_logits(model,long_ids[start:stop],cache)
         mx.eval([c.state for c in cache])
+        mx.clear_cache()
     for token in long_ids[1097:]:
         incremental = last_logits(model,[token],cache)
         mx.eval(incremental)
@@ -60,7 +67,10 @@ def main():
     assert window["top1"] == 1.0 and window["kl"] < 0.005, window
     assert all(c.offset == 1100 for c in cache)
     assert max(c.keys.shape[-2] for i,c in enumerate(cache) if i not in model.model._global) <= 1025
-    result = {"packing": packing, "fusion": fusion, "cache_at_1100": window, "tokenizer_matches_raw": True}
+    local = [c for i, c in enumerate(cache) if i not in model.model._global]
+    assert all(not c.is_trimmable() for c in local)
+    result = {"packing": packing, "fusion": fusion, "cache_at_1100": window, "tokenizer_matches_raw": True,
+              "local_cache_trimmable": {"empty": initial_trimmable, "at_1100": False}}
 
     if Path("results/torch-reference.npz").exists():
         model,_,_ = load("models/original")
@@ -70,7 +80,9 @@ def main():
         result["torch_cpu_reference"] = oracle
         # This is cross-backend agreement, not bitwise CUDA equivalence.
         assert oracle["top1"] >= 0.95 and oracle["kl"] < 0.01, oracle
-    Path("results/correctness.json").write_text(json.dumps(result,indent=2)+"\n")
+    dest = Path(args.output)
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    dest.write_text(json.dumps(result,indent=2)+"\n")
     print(json.dumps(result,indent=2))
 
 

@@ -1,0 +1,14 @@
+Dwarf Violetto
+Copyright 2026 Dwarf Violetto contributors
+
+Limite 1B Violetto and its original inference formulas are by Paradigma,
+licensed under Apache-2.0. The local Limite architecture adapts the MLX
+port by Piergiorgio Di Pasquale (pierjoe), also under Apache-2.0.
+Modified files identify their source; pinned revisions are in THIRD_PARTY.md.
+
+The nucleus sampler adapts MLX-LM by Apple Inc., under MIT.
+Its copyright notice and license are retained in dwarf_violetto/sampling.py
+and licenses/MLX-LM-MIT.txt.
+
+This project is independent of Paradigma and Apple. Model weights are
+downloaded separately and are not part of this source distribution.

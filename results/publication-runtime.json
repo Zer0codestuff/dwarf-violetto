@@ -1,0 +1,27 @@
+{
+  "packing": {
+    "top1": 0.9999999403953552,
+    "kl": 0.0,
+    "max_abs": 0.0
+  },
+  "fusion": {
+    "top1": 0.9999999403953552,
+    "kl": 0.0,
+    "max_abs": 0.0
+  },
+  "cache_at_1100": {
+    "top1": 1.0,
+    "kl": -3.039133957827289e-07,
+    "max_abs": 0.22055816650390625
+  },
+  "tokenizer_matches_raw": true,
+  "local_cache_trimmable": {
+    "empty": true,
+    "at_1100": false
+  },
+  "torch_cpu_reference": {
+    "top1": 0.9523809552192688,
+    "kl": 0.0020678644068539143,
+    "max_abs": 0.7896785736083984
+  }
+}

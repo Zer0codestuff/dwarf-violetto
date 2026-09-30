@@ -1,0 +1,12 @@
+{
+  "offline": true,
+  "independent_problems": 2,
+  "seed": 43,
+  "fresh_cache_same_prompt_same_text": true,
+  "both_completed_at_eos": true,
+  "metrics": [
+    "851 tokens | 13.88s total | 0.25s to first token | 1.17 GB MLX | finish=stop",
+    "",
+    "851 tokens | 12.06s total | 0.13s to first token | 1.17 GB MLX | finish=stop"
+  ]
+}

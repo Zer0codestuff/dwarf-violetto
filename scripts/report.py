@@ -42,6 +42,90 @@ def eos_checks(name):
     return result
 
 
+def decode_experiments():
+    path = RESULTS / "decode-optimization-summary.json"
+    if not path.exists():
+        return []
+    summary = json.loads(path.read_text())
+    lines = ["## Additional decode experiments", "", summary["decision"], "",
+             "Fresh alternating measurements on September 30, 2026, after the user closed another local model. "
+             "Output counts and seeds are listed below. Warmups used 128 or 512 generated tokens per mode, "
+             "with temperature 0.6, top-p 0.95 and forward/reverse mode blocks. "
+             "These are separate from the older 128-output-token measurements above.", "",
+             "| Prompt tokens | Output tokens | Seed | Candidate | Baseline tokens/s | Candidate tokens/s | Gain | Peak MLX, GB |",
+             "| ---: | ---: | ---: | --- | ---: | ---: | ---: | ---: |"]
+    for name in summary["comparisons"]:
+        data = read(name)
+        baseline = data["median"]["baseline"]
+        for mode, speed in data["median"].items():
+            if mode == "baseline":
+                continue
+            peak = statistics.median(row["peak_mlx_gb"] for row in data["runs"] if row["mode"] == mode)
+            label = {"compiled_rope": "Compiled MLX RoPE", "rope": "Custom Metal RoPE",
+                     "mlp": "Compiled MLP", "mlp+rope": "Compiled MLP + Metal RoPE"}.get(mode, mode)
+            lines.append(f"| {data['settings']['context']} | {data['settings']['tokens']} | {data['settings']['seed']} | {label} | "
+                         f"{baseline:.2f} | {speed:.2f} | {speed / baseline - 1:+.1%} | {peak:.2f} |")
+    checks = read("decode-candidate-correctness.json")
+    lines += ["", f"The exactness checks covered {sum(row['positions'] for row in checks['checks'])} forced "
+              "decode positions across RoPE, MUDD, and their combination, at prefixes of 1, 128, 1100, 8192 "
+              "and 32768 tokens. Full capped logits and final KV cache arrays matched exactly. "
+              "The long prefixes repeat a saved mathematical trace. This does not establish an AIME score.", "",
+              "The timing files record code hashes, memory availability, swap, all generated tokens and "
+              "whether sampled traces matched. Earlier variable timings are retained as experiment history. "
+              "The initial manual verification accumulated allocator buffers between prefill chunks; it was "
+              "stopped and rerun with MLX-LM's normal cache-clearing policy. Its times are not speed evidence.", "",
+              "Broader attention correction/gating fusion changed a sampled trace and remains experimental. "
+              "The grouped XSA implementation did not show a stable throughput benefit in the initial alternating run. "
+              "No trained MTP head was added.", ""]
+    profile_path = RESULTS / summary["profiler"]
+    if profile_path.exists():
+        profile = json.loads(profile_path.read_text())
+        lines += ["### Corrected component profile", "",
+                  "Each component is synchronized, so these timings do not predict production tokens/s. "
+                  "The corrected prefill loop clears allocator buffers between chunks, matching the CLI.", "",
+                  "| Context | Instrumented ms/token | Attention ms/token | MLP ms/token | MUDD ms/token | Peak MLX, GB | Allocator cache, GB |",
+                  "| ---: | ---: | ---: | ---: | ---: | ---: | ---: |"]
+        for row in profile["contexts"]:
+            components = row["component_ms_per_token"]
+            lines.append(f"| {row['context']} | {row['instrumented_ms_per_token']:.2f} | "
+                         f"{components['Attention']:.2f} | {components['MLP']:.2f} | {components['MuddMixer']:.2f} | "
+                         f"{row['peak_mlx_gb']:.2f} | {row['allocator_cache_gb']:.2f} |")
+        lines += ["", "The old 32K profile reported 372.71 ms/token while its prefill loop accumulated allocator buffers. "
+                  "The corrected run measured 56.32 ms/token with 1.97 GB peak MLX allocations and 0.49 GB allocator cache. "
+                  "This fixes the diagnostic script; the production CLI already cleared these buffers. "
+                  "Attention dominates the corrected long-context component timings; MUDD is a small share.", ""]
+    pilot_path = RESULTS / "throughput-feasibility.json"
+    if pilot_path.exists():
+        pilot = json.loads(pilot_path.read_text())
+        base = pilot["median"]["batch_1_block_1"]["aggregate_tps"]
+        lines += ["### Batch and verification feasibility", "",
+                  "A separate synchronous pilot used an identical 128-token prefix and 64 forced tokens, "
+                  "with a 16-token warmup and two measured runs per mode in forward/reverse order. "
+                  "It omits sampling, EOS, varying sequence lengths and completed answers. "
+                  "Verification computes all intermediate vocabulary distributions. "
+                  "Its rates must not be compared directly with the sampled generation tests above.", "",
+                  "| Mode | Aggregate tokens/s | Tokens/s per sequence | Ratio to serial pilot | Max capped-logit difference |",
+                  "| --- | ---: | ---: | ---: | ---: |"]
+        for batch, block, label in [(1, 1, "Serial control"), (2, 1, "Batch of 2"), (4, 1, "Batch of 4"),
+                                    (1, 2, "Verify 2 tokens"), (1, 4, "Verify 4 tokens"), (1, 8, "Verify 8 tokens")]:
+            data = pilot["median"][f"batch_{batch}_block_{block}"]
+            difference = max(row["max_abs_logits_vs_serial"] for row in pilot["runs"]
+                             if (row["batch"], row["block"]) == (batch, block))
+            lines.append(f"| {label} | {data['aggregate_tps']:.2f} | {data['sequence_tps']:.2f} | "
+                         f"{data['aggregate_tps']/base:.2f}x | {difference:.3f} |")
+        lines += ["", "The batch-of-four pilot suggests a useful way to reduce the total compute time of a future "
+                  "multi-problem evaluation. It duplicates one prefix at a shared length; it is not yet an AIME batch evaluator. "
+                  "Peak MLX allocations include retained logits for comparison.", "",
+                  "All 64 forced positions kept the same top prediction, but batch and multi-token modes changed full logits. "
+                  "Therefore these results do not establish identical stochastic sampling or preserved mathematical accuracy.", "",
+                  "The faster multi-token verification is a target-pass cost measurement, not an MTP generation speedup. "
+                  "A compatible trained drafter, acceptance/rejection sampling and safe cache rollback are still required. "
+                  "The rotating local cache is trimmable before its 1025-key capacity is reached, then reports "
+                  "`is_trimmable=False`; the pilot recorded a fresh cache only. No batch or speculative path was enabled "
+                  "in the CLI or evaluator.", ""]
+    return lines
+
+
 def main():
     runs = {key: read(file) for key, file in {
         "BF16": "final-bf16-128.json", "Q8 eager": "final-q8-eager-128.json",
@@ -122,13 +206,24 @@ def main():
         lines.append(f"| {title} | {bf_math['generation'][key]:{fmt}} | {q8_math['generation'][key]:{fmt}} |")
     lines += ["", "Sampling used the stock MLX-LM sampler with temperature 0.6, top-p 0.95 and seed 42 plus the original case index. Both models reran every problem from a fresh cache. All Q8 cases used packed decode and compiled operations. The evaluator records the actual EOS ID and saves raw completions. Counts include the final EOS token, following MLX-LM's accounting. Elapsed times include the prompt and full response, exclude model loading, and are single runs with different response lengths, not fixed-work speed comparisons.", "",
               "The earlier capped checks reported 9/12 completed correct BF16 answers and 10/12 Q8 answers. Their remaining answers were truncated, not demonstrated mathematical errors. These EOS runs supersede those quality results; the original records remain available as experiment history.", "",
-              "The [official release article](https://paradigma.inc/blog/limite-1b-violetto/) describes a context of up to 131k tokens. Its current text and evaluation table do not specify mean output tokens per task. The token counts above were measured locally.", "",
+              "The [official release article](https://paradigma.inc/blog/limite-1b-violetto/) describes a context of up to 131k tokens. The output token counts above were measured locally.", "",
               "These 12 hand-authored checks are too small and easy to establish unchanged competition-level mathematical accuracy. They do not justify a claim of zero quality loss. The independent answer-key check corrected one fixture before the final report; saved BF16 completions were regraded without changing their text.", "",
               "## Scope and limitations", "",
               "Only the final-* speed files represent the final benchmark protocol. Earlier files are experiment history, some with different packing and memory-residency settings. The Mac was not otherwise isolated from normal applications. Earlier measurements changed under memory pressure; final runs were sequential with no other project inference process running.", "",
-              "MLX allocation, RSS, CPU time, first-token latency and system swap are recorded. GPU utilization and electrical power were not measured. The 131072-token configured maximum has not been validated; speed was measured at 128 and 4096 prompt tokens.", "",
+              "MLX allocation, RSS, CPU time, first-token latency and system swap are recorded. Continuous GPU utilization, frequency and electrical power were not measured. The 131072-token configured maximum has not been validated; the original speed tests covered 128 and 4096 prompt tokens. Additional decode comparisons at 8192 and 32768 tokens are reported separately below.", "",
               "No trained compatible draft head is included in this checkpoint. Speculative decoding, ANE execution and a standalone C/Metal engine were not implemented. There is no evidence here that those alternatives would improve this small model on this M4. This is the fastest measured low-loss configuration among the implementations tested, not a claim of a hardware-wide optimum.", "",
               "Run commands and source attribution are in README.md and THIRD_PARTY.md. Raw completions, measurements and code hashes are in results/.", ""]
+    publication = RESULTS / "publication-runtime.json"
+    if publication.exists():
+        oracle = json.loads(publication.read_text()).get("torch_cpu_reference")
+        if oracle:
+            lines += ["## Publication review", "",
+                      f"The September 30 rerun with PyTorch 2.13.0 kept 20 of 21 top predictions "
+                      f"and measured mean KL {oracle['kl']:.6f} against MLX BF16. "
+                      "The historical CPU reference above used 2.11.0. Runtime packing and "
+                      "fusion again matched full logits exactly; local-cache behavior was checked "
+                      "on both sides of its 1025-key capacity. See AUDIT.md for the other checks.", ""]
+    lines += decode_experiments()
     (ROOT / "BENCHMARKS.md").write_text("\n".join(lines))
     print(f"Q8: {q8['decode_tps']:.1f} tok/s, {summary['speedup']:.2f}x BF16, {q8['peak_mlx_gb']:.2f} GB")
 

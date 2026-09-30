@@ -6,7 +6,7 @@ from pathlib import Path
 import mlx.core as mx
 import numpy as np
 from .runtime import load, prompt_tokens
-from .provenance import provenance
+from .provenance import provenance, ROOT, script_hashes
 
 
 def main():
@@ -18,8 +18,12 @@ def main():
     p.add_argument("--output", default="results/fidelity.json")
     p.add_argument("--reference-dir", default="results")
     args = p.parse_args()
+    manifest = Path(args.reference_dir) / "reference-manifest.json"
+    if args.reference:
+        # A partial reference generation must not leave an old completion marker.
+        manifest.unlink(missing_ok=True)
     model, tokenizer, _ = load(args.model, optimized=args.optimized, fused=args.fused)
-    cases = json.loads(Path("data/math_checks.json").read_text())
+    cases = json.loads((ROOT / "data/math_checks.json").read_text())
     rows = []
     for case in cases:
         ids = prompt_tokens(tokenizer, case["problem"])
@@ -42,6 +46,8 @@ def main():
                 if list(ref["ids"]) != ids:
                     raise ValueError("Tokenizer changed relative to the reference")
                 old = ref["logprobs"]
+            if old.shape != arr.shape:
+                raise ValueError("Reference distributions do not match this fixture corpus")
             kl = np.sum(np.exp(old) * (old-arr), axis=-1)
             agreement = np.argmax(old, axis=-1) == np.argmax(arr, axis=-1)
             rows.append({"id": case["id"], "positions": len(arr),
@@ -52,13 +58,20 @@ def main():
         gc.collect()
         mx.clear_cache()
         print(case["id"], flush=True)
-    if not args.reference:
+    if args.reference:
+        manifest.write_text(json.dumps({"sha256": provenance(args.model),
+                                       "settings": vars(args), "cases": [c["id"] for c in cases]}, indent=2) + "\n")
+    else:
         n = sum(x["positions"] for x in rows)
         result = {"settings": vars(args), "sha256": provenance(args.model), "positions": n, "cases": rows,
+                  "reference_sha256": script_hashes(Path(args.reference_dir).glob("reference-*.npz")),
                   "kl_mean": sum(x["kl_mean"] * x["positions"] for x in rows) / n,
                   "top1_agreement": sum(x["top1_agreement"] * x["positions"] for x in rows) / n}
-        Path(args.output).write_text(json.dumps(result, indent=2) + "\n")
-        print(json.dumps({k: v for k, v in result.items() if k != "cases"}))
+        result["reference_provenance"] = json.loads(manifest.read_text()) if manifest.exists() else None
+        dest = Path(args.output)
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        dest.write_text(json.dumps(result, indent=2) + "\n")
+        print(json.dumps({k: result[k] for k in ("positions", "kl_mean", "top1_agreement")}))
 
 
 if __name__ == "__main__":

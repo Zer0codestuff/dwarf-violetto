@@ -4,13 +4,19 @@ Local inference and measured optimizations for [Paradigma's Limite 1B Violetto](
 
 This is a model-specific MLX runtime, inspired by Dwarf Star's focus on measuring a narrow implementation. It is not a fork of Dwarf Star. The Limite architecture starts from Piergiorgio Di Pasquale's MLX port. See [THIRD_PARTY.md](THIRD_PARTY.md) for attribution and pinned revisions.
 
-The final M4 benchmark measured **53.9 tokens/s with default sampling**, versus 30.3 for BF16. Greedy decoding reached 71.8 tokens/s, versus 39.8 for BF16. Peak MLX allocations were 1.22 GB and 2.16 GB. At a 4096-token prompt, Q8 decoded at 66.9 tokens/s with greedy decoding. See [BENCHMARKS.md](BENCHMARKS.md) for methodology, accuracy checks and limitations.
+The September 25-26 M4 benchmark measured **53.9 tokens/s with default sampling**, versus 30.3 for BF16. Greedy decoding reached 71.8 tokens/s, versus 39.8 for BF16. Peak MLX allocations were 1.22 GB and 2.16 GB. At a 4096-token prompt, Q8 decoded at 66.9 tokens/s with greedy decoding. See [BENCHMARKS.md](BENCHMARKS.md) for methodology, accuracy checks and limitations.
 
-## Use
+## Quick start
 
-The environment and checkpoints are already installed on this Mac.
+Requirements: an Apple Silicon Mac, [uv](https://docs.astral.sh/uv/getting-started/installation/)
+and about 8 GB of free disk space for the original checkpoint, Q8 and the Python
+environment. The tested machine is an M4 MacBook Pro with 16 GB memory, running
+macOS 27.0. Other Apple Silicon configurations are not benchmarked here.
+
+Clone or download this repository, enter its directory, then run:
 
 ```sh
+./setup
 ./violetto "How many positive divisors does 360 have?"
 ./violetto --interactive
 ./violetto --model models/original "Find the area of a triangle with sides 13, 14, 15."
@@ -30,7 +36,12 @@ Install `uv`, then run:
 ./setup
 ```
 
-This creates a project-local Python 3.12 environment, downloads the pinned official checkpoint, and derives Q8 locally. It does not execute Python from the model repository. Keep several GB free for the original weights, converted weights and environment.
+This creates a project-local Python 3.12 environment, downloads the pinned official
+checkpoint, checks its SHA256, and derives Q8 locally. It does not execute Python
+from the model repository. Conversions use a temporary directory and expose the
+finished checkpoint only after validating its files. Existing checkpoints are
+preserved. If setup finds an incomplete Q8 directory from an older interrupted
+conversion, rename that directory before running setup again.
 
 Optional variants:
 
@@ -55,7 +66,7 @@ Speed tests use fixed work, a warmup and three repetitions. They ignore EOS deli
 
 Mathematical checks use the checkpoint chat template, the recommended sampling settings and fixed seeds. All completions are saved. The 12 hand-authored problems are local regression checks, not an AIME score or evidence of unchanged competition-level ability. Token-distribution fidelity is a separate metric.
 
-Run the two evaluations sequentially to avoid GPU contention. They have no output cap or time limit before EOS, other than the model context. The evaluator saves progress every 30 seconds and records the actual stop token, token count, elapsed time and peak MLX allocation. `--resume` skips completed cases and restarts an interrupted case with its original seed. It refuses to mix different code, settings, model configuration or fixtures. Use a different output path for a new run.
+Run the two evaluations sequentially to avoid GPU contention. They have no output cap or time limit before EOS, other than the model context. The evaluator saves progress every 30 seconds and records the actual stop token, token count, elapsed time and peak MLX allocation. `--resume` skips completed cases and restarts an interrupted case with its original seed. It checks code, settings, package versions, weights, tokenizer and fixtures. Old records made before weight/tokenizer fingerprinting cannot be resumed with the new code. Use a different output path for a new run.
 
 The previous 2048/4096-token answer checks are retained as historical, truncated runs. Their completion counts must not be interpreted as mathematical error rates. Fixed-length speed tests still use a token budget so each runtime performs the same amount of work.
 
@@ -71,13 +82,36 @@ The fixed corpus samples every fourth position after the first eight tokens, spa
 For the independent CPU comparison and focused runtime checks:
 
 ```sh
-uv pip install --python .venv/bin/python torch==2.11.0
+uv pip install --python .venv/bin/python -r requirements-reference.txt
 .venv/bin/python scripts/torch_reference.py
 PYTHONPATH=. .venv/bin/python scripts/verify_runtime.py
 .venv/bin/python scripts/verify_fixtures.py
 ```
 
-PyTorch CPU and Metal do not use identical rounding. This checks agreement with an independent translation of the official formulas; it is not a live comparison with CUDA vLLM.
+PyTorch CPU and Metal do not use identical rounding. This checks agreement with an independent translation of the official formulas; it is not a live comparison with CUDA vLLM. The historical CPU check used PyTorch 2.11.0; the publication review repeats it with 2.13.0. PyTorch is optional and is not imported by inference.
+
+CPU checks run without MLX, weights or a Mac:
+
+```sh
+python3 -m unittest discover -s tests -v
+python3 scripts/verify_fixtures.py
+python3 scripts/check_repository.py
+python3 scripts/report.py
+```
+
+GitHub Actions runs these checks and verifies that the generated report is current.
+It does not run Metal inference. On Apple Silicon, regenerate local Q8 arrays and
+run the sampler check after setup:
+
+```sh
+.venv/bin/python -m dwarf_violetto.fidelity --model models/q8 --optimized --reference --reference-dir results/q8-reference
+PYTHONPATH=. .venv/bin/python scripts/verify_sampling.py
+```
+
+The grader matches the last complete `\boxed{...}` answer, strips whitespace and
+normalizes simple LaTeX fractions. It is a conservative fixture matcher, not a
+symbolic mathematical verifier. A matching box in a truncated response does not
+count as a completed correct answer.
 
 ## Runtime choices
 
@@ -97,12 +131,43 @@ The default sampler scatters the top-p retention mask directly to vocabulary ord
 PYTHONPATH=. .venv/bin/python scripts/verify_sampling.py
 ```
 
-The sampler validation reads the local Q8 reference arrays. Regenerate them with `python -m dwarf_violetto.fidelity --model models/q8 --optimized --reference --reference-dir results/q8-reference` inside the activated environment if needed.
+The sampler validation reads the local Q8 reference arrays generated above.
 
 No CPU/GPU global settings are changed. There is no pruning, fine-tuning, shortened attention window, or reduced reasoning budget hidden in the default. Speculative decoding has not been enabled: this checkpoint provides no trained draft head, and another full 48-layer pass needs a measured benefit to justify it. SSD offload is unnecessary at this model size.
+
+## Additional decode experiments
+
+The September 30 tests kept the existing Q8 default. Compiled RoPE, compiled MUDD and their combination matched full logits and final cache arrays at 960 forced decode positions, including 8K and 32K prefixes. The settled RoPE speed comparisons measured +0.5% at 128 prompt tokens, +0.9% at 8192 and -1.1% at 32768. Process CPU time fell 6.5% in the 128-prompt/512-output workload, including prefill. The small, mixed throughput changes do not establish a general speedup. Custom Metal RoPE and MLP compilation also failed to establish a clear throughput benefit. The scripts keep these candidates reversible and separate from the default path.
+
+```sh
+PYTHONPATH=. .venv/bin/python scripts/verify_decode_candidates.py
+PYTHONPATH=. .venv/bin/python scripts/compare_decode.py --warmup 512 --modes baseline compiled_rope --output results/paired-check.json
+PYTHONPATH=. .venv/bin/python scripts/compare_decode.py --context 32768 --tokens 256 --repeat 1 --output results/paired-long-check.json
+PYTHONPATH=. .venv/bin/python scripts/profile_decode.py
+```
+
+Run inference measurements sequentially while other local inference and computer-use tasks are idle. The timing files record memory, code hashes, seeds, all generated tokens and GPU snapshots. Earlier variable series are retained and excluded from default selection. Component profiling synchronizes each operation and changes scheduling, so its times are diagnostic rather than production throughput.
+
+Manual prefill loops clear the MLX allocator cache after each block, matching MLX-LM's generation policy. The first interrupted long-context verification lacked this step and accumulated temporary buffers. The corrected verification completed all checks. See `results/decode-optimization-summary.json` and the additional table in [BENCHMARKS.md](BENCHMARKS.md).
+
+`PYTHONPATH=. .venv/bin/python scripts/throughput_feasibility.py` runs a short synchronous batch/verification pilot. Four identical sequences reached about 213 aggregate tokens/s versus 61 for its serial control. Verifying eight supplied tokens together reduced target-pass cost by about 5.3x. These are fixed-work computation rates without sampling or completed answers, not measured AIME or MTP generation speedups. Full logits changed, despite matching all 64 top predictions. A variable-length evaluator needs quality validation; speculative decoding also needs a trained drafter and safe local-cache rollback. The rotating cache permits trimming while its offset is below 1025, then becomes non-trimmable. The pilot's `true` value described a fresh cache.
+
+`experiment_post.py` intentionally raises if its sampled trace changes. That
+candidate was rejected and remains disabled. The other `experiment_*.py` files
+are research scripts, not supported inference entry points. See
+[results/README.md](results/README.md) for historical, excluded and current records.
 
 ## Limits
 
 Results are specific to this M4, its power state, software versions and tested contexts. The configured 131072-token context is not a claim that this project has validated that full length. MLX peak allocation and process RSS are different measurements; neither is a GPU utilization or power reading.
 
 Weights and caches are ignored by Git. No repository or service is published by setup or inference.
+
+## License and contributions
+
+Source code is licensed under [Apache-2.0](LICENSE). The sampler adapted from
+MLX-LM retains its [MIT notice](licenses/MLX-LM-MIT.txt). Paradigma's model weights
+are downloaded separately under Apache-2.0. This is an independent project; see
+[THIRD_PARTY.md](THIRD_PARTY.md) and [NOTICE](NOTICE) for attribution.
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for validation and measurement requirements.

@@ -2,11 +2,22 @@
 set -eu
 PROJECT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 cd "$PROJECT_DIR"
+if [ "$(uname -s)" != Darwin ] || [ "$(uname -m)" != arm64 ]; then
+    echo "Dwarf Violetto requires an Apple Silicon Mac." >&2
+    exit 1
+fi
+if ! command -v uv >/dev/null 2>&1; then
+    echo "Install uv first: https://docs.astral.sh/uv/getting-started/installation/" >&2
+    exit 1
+fi
 if [ ! -x .venv/bin/python ]; then
     uv venv --python 3.12 .venv
 fi
+.venv/bin/python -c 'import sys; sys.exit(0 if sys.version_info[:2] == (3, 12) else "The existing .venv must use Python 3.12; rename it and rerun setup.")'
 uv pip install --python .venv/bin/python -r requirements.lock
 HF_HOME="$PROJECT_DIR/.cache/huggingface" .venv/bin/python scripts/download.py
-if [ ! -d models/q8 ]; then
+if [ ! -e models/q8 ]; then
     .venv/bin/python -m dwarf_violetto.prepare --recipe q8
+else
+    .venv/bin/python -c 'from dwarf_violetto.checkpoint import checkpoint_files; checkpoint_files("models/q8")'
 fi

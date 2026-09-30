@@ -1,0 +1,21 @@
+title = "Dwarf Violetto secret scanning"
+
+[extend]
+useDefault = true
+
+[[rules]]
+id = "generic-api-key"
+
+[[rules.allowlists]]
+description = "The independently checked math fixture SHA256 is public metadata"
+condition = "AND"
+paths = ['''(^|/)results/bf16-math\.json$''']
+regexTarget = "match"
+regexes = ['''answer_key_sha256"\s*:\s*"3ce3941747571ce3dc5eb6c1210cc345d7dc601bfb43864e7b4bd43420e017a8"''']
+
+[[rules.allowlists]]
+description = "Verified pinned tokenizer file SHA256 values in measurement provenance"
+condition = "AND"
+paths = ['''(^|/)results/publication-[^/]+\.json$''']
+regexTarget = "match"
+regexes = ['''special_tokens_map\.json"\s*:\s*"6676f091c8bc4d1b50146427cfde92073402866b87b6e39223227931b70083e9"''', '''tokenizer\.json"\s*:\s*"296e081e2f5ecf9d87814aa9b0f4b12d670ed2b2e2be6c84e01a9466c953afb7"''', '''tokenizer_config\.json"\s*:\s*"d36abf9716797c95779c0b81eb8978e5b5356b067546d94d58bb4975d01139b0"''']

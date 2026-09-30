@@ -6,7 +6,7 @@ import mlx.core as mx
 from mlx_lm import stream_generate
 from .sampling import make_sampler
 from .runtime import load, prompt_tokens
-from .generation import output_budget, finish_reason
+from .generation import output_budget, finish_reason, validate_sampling
 
 
 def main():
@@ -23,8 +23,12 @@ def main():
     p.add_argument("--stock-sampler", action="store_true", help="Use the original MLX-LM sampler for comparison")
     args = p.parse_args()
     interactive = args.interactive or (not args.problem and sys.stdin.isatty())
-    if (args.max_tokens is not None and args.max_tokens < 1) or args.temp < 0 or not 0 < args.top_p <= 1:
-        p.error("Use a positive token budget, nonnegative temperature and 0 < top-p <= 1")
+    try:
+        validate_sampling(args.temp, args.top_p)
+        if args.max_tokens is not None and args.max_tokens < 1:
+            raise ValueError("Use a positive token budget")
+    except ValueError as error:
+        p.error(str(error))
     problem = args.problem or (None if interactive else sys.stdin.read().strip())
     if not interactive and not problem:
         p.error("Provide a problem")
@@ -49,6 +53,7 @@ def main():
         except ValueError as error:
             p.error(str(error))
         mx.random.seed(args.seed)
+        mx.reset_peak_memory()
         start = time.perf_counter()
         first = None
         try:

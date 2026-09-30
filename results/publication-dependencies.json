@@ -1,0 +1,213 @@
+{
+  "checked_utc": "2026-09-30T18:05:29.135282+00:00",
+  "tool": "pip-audit 2.10.1",
+  "installed_packages": 40,
+  "known_vulnerabilities": 0,
+  "dependencies": [
+    {
+      "name": "annotated-doc",
+      "version": "0.0.5",
+      "advisories": []
+    },
+    {
+      "name": "anyio",
+      "version": "4.15.1",
+      "advisories": []
+    },
+    {
+      "name": "certifi",
+      "version": "2026.7.22",
+      "advisories": []
+    },
+    {
+      "name": "click",
+      "version": "8.5.0",
+      "advisories": []
+    },
+    {
+      "name": "filelock",
+      "version": "4.0.3",
+      "advisories": []
+    },
+    {
+      "name": "fsspec",
+      "version": "2026.9.0",
+      "advisories": []
+    },
+    {
+      "name": "h11",
+      "version": "0.16.0",
+      "advisories": []
+    },
+    {
+      "name": "hf-xet",
+      "version": "1.6.0",
+      "advisories": []
+    },
+    {
+      "name": "httpcore",
+      "version": "1.0.9",
+      "advisories": []
+    },
+    {
+      "name": "httpx",
+      "version": "0.28.1",
+      "advisories": []
+    },
+    {
+      "name": "huggingface-hub",
+      "version": "1.33.0",
+      "advisories": []
+    },
+    {
+      "name": "idna",
+      "version": "3.20",
+      "advisories": []
+    },
+    {
+      "name": "jinja2",
+      "version": "3.1.6",
+      "advisories": []
+    },
+    {
+      "name": "markdown-it-py",
+      "version": "4.2.0",
+      "advisories": []
+    },
+    {
+      "name": "markupsafe",
+      "version": "3.0.3",
+      "advisories": []
+    },
+    {
+      "name": "mdurl",
+      "version": "0.1.2",
+      "advisories": []
+    },
+    {
+      "name": "mlx",
+      "version": "0.32.2",
+      "advisories": []
+    },
+    {
+      "name": "mlx-lm",
+      "version": "0.31.3",
+      "advisories": []
+    },
+    {
+      "name": "mlx-metal",
+      "version": "0.32.2",
+      "advisories": []
+    },
+    {
+      "name": "mpmath",
+      "version": "1.3.0",
+      "advisories": []
+    },
+    {
+      "name": "networkx",
+      "version": "3.7",
+      "advisories": []
+    },
+    {
+      "name": "numpy",
+      "version": "2.5.3",
+      "advisories": []
+    },
+    {
+      "name": "packaging",
+      "version": "26.3",
+      "advisories": []
+    },
+    {
+      "name": "protobuf",
+      "version": "7.36.2",
+      "advisories": []
+    },
+    {
+      "name": "psutil",
+      "version": "7.2.2",
+      "advisories": []
+    },
+    {
+      "name": "pygments",
+      "version": "2.21.0",
+      "advisories": []
+    },
+    {
+      "name": "pyyaml",
+      "version": "6.0.3",
+      "advisories": []
+    },
+    {
+      "name": "regex",
+      "version": "2026.9.10",
+      "advisories": []
+    },
+    {
+      "name": "rich",
+      "version": "15.0.0",
+      "advisories": []
+    },
+    {
+      "name": "safetensors",
+      "version": "0.8.0",
+      "advisories": []
+    },
+    {
+      "name": "sentencepiece",
+      "version": "0.2.2",
+      "advisories": []
+    },
+    {
+      "name": "setuptools",
+      "version": "83.0.0",
+      "advisories": []
+    },
+    {
+      "name": "shellingham",
+      "version": "1.5.4",
+      "advisories": []
+    },
+    {
+      "name": "sympy",
+      "version": "1.14.0",
+      "advisories": []
+    },
+    {
+      "name": "tokenizers",
+      "version": "0.23.2",
+      "advisories": []
+    },
+    {
+      "name": "torch",
+      "version": "2.13.0",
+      "advisories": []
+    },
+    {
+      "name": "tqdm",
+      "version": "4.70.1",
+      "advisories": []
+    },
+    {
+      "name": "transformers",
+      "version": "5.17.0",
+      "advisories": []
+    },
+    {
+      "name": "typer",
+      "version": "0.27.2",
+      "advisories": []
+    },
+    {
+      "name": "typing-extensions",
+      "version": "4.16.0",
+      "advisories": []
+    }
+  ],
+  "optional_reference_updates": {
+    "torch": "2.11.0 -> 2.13.0",
+    "setuptools": "81.0.0 -> 83.0.0"
+  },
+  "scope": "Installed core and optional CPU-reference packages. This is a current advisory scan, not a security guarantee."
+}

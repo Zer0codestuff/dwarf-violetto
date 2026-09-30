@@ -1,0 +1,23 @@
+{
+  "date": "2026-09-30",
+  "interference": "The user reported another local model, then concurrent Codex computer use. The local model was closed. Performance during the computer-use task varied sharply.",
+  "excluded_speed_files": [
+    "paired-decode-refreshed-128.json",
+    "paired-decode-confirmed-128.json",
+    "paired-decode-idle-128.json"
+  ],
+  "baseline_observed_tps_range": [
+    29.98,
+    69.69
+  ],
+  "gpu_snapshots_without_project_inference_percent": [
+    79,
+    21,
+    66
+  ],
+  "numerical_checks": "Exactness results remain valid. They compare values, not elapsed time.",
+  "verification_allocator_fix": "Clear the MLX allocator cache after each manual prefill block, matching MLX-LM generate_step. Restarted and completed all numerical checks.",
+  "policy": "Run new timing comparisons after the other Codex task completes. Do not use the excluded runs to select a default optimization.",
+  "after_other_task_completed": "The first subsequent series still varied from 37.75 to 70.33 tokens/s; it is also excluded. The final settled comparisons are recorded separately.",
+  "outcome": "Keep the existing Q8 default. Record the small measured RoPE changes without claiming a reliable general speedup."
+}

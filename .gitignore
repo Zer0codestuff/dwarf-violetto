@@ -6,3 +6,10 @@ __pycache__/
 results/**/*.npz
 research/
 .DS_Store
+.env
+.env.*
+*.pem
+*.key
+results/**/*.tmp
+results/**/reference-manifest.json
+.publication/

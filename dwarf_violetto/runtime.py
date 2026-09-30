@@ -7,6 +7,7 @@ from mlx_lm.utils import load_model, load_tokenizer
 from transformers import PreTrainedConfig
 from .limite import Model, ModelArgs
 from .optimize import optimize
+from .checkpoint import checkpoint_files
 
 
 class TokenizerConfig(PreTrainedConfig):
@@ -25,6 +26,7 @@ class InferenceModel(Model):
 
 def load(path, optimized=False, fused=False):
     path = Path(path).resolve()
+    checkpoint_files(path)
     config = json.loads((path / "config.json").read_text())
     if config.get("model_file"):
         raise ValueError("External model code is not supported. Use the pinned checkpoint.")
@@ -33,6 +35,8 @@ def load(path, optimized=False, fused=False):
     if optimized:
         optimize(model)
     if fused:
+        if model.args.xsa_normalize_eps != 1e-4:
+            raise ValueError("Compiled XSA requires the checkpoint's epsilon of 1e-4")
         from .fused import xsa, residual
         for layer in model.layers:
             layer.self_attn._fused_xsa = xsa

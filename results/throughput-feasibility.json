@@ -1,0 +1,219 @@
+{
+  "sha256": {
+    "dwarf_violetto/__init__.py": "ac66e8b3bf150afc5b97134a197d233a29ea7035b5e55219e25969a91de76420",
+    "dwarf_violetto/__main__.py": "8fbf40ca824129feb1c1d5dda92c7049632f4faad995111df2fb35b2f19569a5",
+    "dwarf_violetto/bench.py": "6bf7012d324ae4530b4d2a3833258d39cf486b675a1005929eef1b971a47306d",
+    "dwarf_violetto/evaluate.py": "146f3ed0a910888fe4acbf361e4c590528a112938ee9d76d35761aa04ecfc62d",
+    "dwarf_violetto/fidelity.py": "0d57fd828c51d51270626e674c7540a0133b2ccc6b09de4d78ba8abea87ed413",
+    "dwarf_violetto/fused.py": "36f469738bf8e38c40fca4aa130be7b0dcae19cb458a14c66a37ae8929bbb6fc",
+    "dwarf_violetto/generation.py": "afca6285713f0ac0002af093ea3317101b068dcb116fa3e8fef6d350a3e94ea2",
+    "dwarf_violetto/kernels.py": "8b7b25575f9b9c6b1548f52d6847890e5a92f28039cbf48523573c4033fdca3a",
+    "dwarf_violetto/limite.py": "4e623a47dec0f5122a543cf526486fecc66b46e39a176ec1fac2b70da5e95197",
+    "dwarf_violetto/optimize.py": "4aa81bc7932fc48931500b516b8b3006e166066489354930b50ff5417b0aca16",
+    "dwarf_violetto/prepare.py": "1346f57e60d78efd5ff235a73b48032b4607cd17593c4ae97e67a14527331903",
+    "dwarf_violetto/provenance.py": "006f95ce46102206fd8658a20d1f6cee616b4ade8194da20a7ad54b926f76c1a",
+    "dwarf_violetto/runtime.py": "60de97d0bb3e83469e287802edc23ed3d49d5542d52976b9b23ac6ca50021df8",
+    "dwarf_violetto/sampling.py": "ec633e772824541dad22419b497a7e8975e66987d960afdafdf5ed7c37b0e93a",
+    "data/math_checks.json": "3ce3941747571ce3dc5eb6c1210cc345d7dc601bfb43864e7b4bd43420e017a8",
+    "models/q8/config.json": "80b8bcc33f0449642fec131b4c2856bbf57e08e9a008340c8e20d9fd3be530e7"
+  },
+  "script_sha256": "c196e888c5898d10b288d010eafdc57e2595bce70f7c70c9ecec65fb8ba33a31",
+  "method": "Synchronous forced decoding after an identical 128-token prefix. Two measured runs per mode in forward/reverse order, after a 16-token warmup. No sampling or EOS. Batch rows duplicate the same prefix at a shared length. Verification computes all intermediate vocabulary logits. This is not a variable-length batch evaluator or MTP decoder.",
+  "local_cache_trimmable": true,
+  "runs": [
+    {
+      "batch": 1,
+      "block": 1,
+      "prefix_tokens": 128,
+      "forced_tokens_per_sequence": 64,
+      "prefill_seconds": 0.08651462499983609,
+      "decode_seconds": 1.1443284170236439,
+      "sequence_tps": 55.92800025578465,
+      "aggregate_tps": 55.92800025578465,
+      "peak_mlx_gb": 1.219335662,
+      "max_abs_logits_vs_serial": 0.0,
+      "top1_agreement_vs_serial": 1.0
+    },
+    {
+      "batch": 2,
+      "block": 1,
+      "prefix_tokens": 128,
+      "forced_tokens_per_sequence": 64,
+      "prefill_seconds": 0.16250912501709536,
+      "decode_seconds": 1.1873702080338262,
+      "sequence_tps": 53.9006280997887,
+      "aggregate_tps": 107.8012561995774,
+      "peak_mlx_gb": 1.334906906,
+      "max_abs_logits_vs_serial": 0.4159088134765625,
+      "top1_agreement_vs_serial": 1.0
+    },
+    {
+      "batch": 4,
+      "block": 1,
+      "prefix_tokens": 128,
+      "forced_tokens_per_sequence": 64,
+      "prefill_seconds": 0.3185896669747308,
+      "decode_seconds": 1.2884258329868317,
+      "sequence_tps": 49.673018315408235,
+      "aggregate_tps": 198.69207326163294,
+      "peak_mlx_gb": 1.520646154,
+      "max_abs_logits_vs_serial": 0.4243307113647461,
+      "top1_agreement_vs_serial": 1.0
+    },
+    {
+      "batch": 1,
+      "block": 2,
+      "prefix_tokens": 128,
+      "forced_tokens_per_sequence": 64,
+      "prefill_seconds": 0.08640487497905269,
+      "decode_seconds": 0.5821716249920428,
+      "sequence_tps": 109.93321771887244,
+      "aggregate_tps": 109.93321771887244,
+      "peak_mlx_gb": 1.258165742,
+      "max_abs_logits_vs_serial": 0.3316354751586914,
+      "top1_agreement_vs_serial": 1.0
+    },
+    {
+      "batch": 1,
+      "block": 4,
+      "prefix_tokens": 128,
+      "forced_tokens_per_sequence": 64,
+      "prefill_seconds": 0.0791744589805603,
+      "decode_seconds": 0.27735191700048745,
+      "sequence_tps": 230.75376832490946,
+      "aggregate_tps": 230.75376832490946,
+      "peak_mlx_gb": 1.258165742,
+      "max_abs_logits_vs_serial": 0.3316354751586914,
+      "top1_agreement_vs_serial": 1.0
+    },
+    {
+      "batch": 1,
+      "block": 8,
+      "prefix_tokens": 128,
+      "forced_tokens_per_sequence": 64,
+      "prefill_seconds": 0.08073462499305606,
+      "decode_seconds": 0.1989409169764258,
+      "sequence_tps": 321.70355386259683,
+      "aggregate_tps": 321.70355386259683,
+      "peak_mlx_gb": 1.258165742,
+      "max_abs_logits_vs_serial": 0.3931698799133301,
+      "top1_agreement_vs_serial": 1.0
+    },
+    {
+      "batch": 1,
+      "block": 8,
+      "prefix_tokens": 128,
+      "forced_tokens_per_sequence": 64,
+      "prefill_seconds": 0.07983212498947978,
+      "decode_seconds": 0.19556708401069045,
+      "sequence_tps": 327.2534349210909,
+      "aggregate_tps": 327.2534349210909,
+      "peak_mlx_gb": 1.258165742,
+      "max_abs_logits_vs_serial": 0.3931698799133301,
+      "top1_agreement_vs_serial": 1.0
+    },
+    {
+      "batch": 1,
+      "block": 4,
+      "prefix_tokens": 128,
+      "forced_tokens_per_sequence": 64,
+      "prefill_seconds": 0.08048629201948643,
+      "decode_seconds": 0.27623691700864583,
+      "sequence_tps": 231.6851805799617,
+      "aggregate_tps": 231.6851805799617,
+      "peak_mlx_gb": 1.258165742,
+      "max_abs_logits_vs_serial": 0.3316354751586914,
+      "top1_agreement_vs_serial": 1.0
+    },
+    {
+      "batch": 1,
+      "block": 2,
+      "prefix_tokens": 128,
+      "forced_tokens_per_sequence": 64,
+      "prefill_seconds": 0.07965908304322511,
+      "decode_seconds": 0.5165075419936329,
+      "sequence_tps": 123.90912967692724,
+      "aggregate_tps": 123.90912967692724,
+      "peak_mlx_gb": 1.258165742,
+      "max_abs_logits_vs_serial": 0.3316354751586914,
+      "top1_agreement_vs_serial": 1.0
+    },
+    {
+      "batch": 4,
+      "block": 1,
+      "prefix_tokens": 128,
+      "forced_tokens_per_sequence": 64,
+      "prefill_seconds": 0.29723941697739065,
+      "decode_seconds": 1.1272161660017446,
+      "sequence_tps": 56.77704235471455,
+      "aggregate_tps": 227.1081694188582,
+      "peak_mlx_gb": 1.520646154,
+      "max_abs_logits_vs_serial": 0.4243307113647461,
+      "top1_agreement_vs_serial": 1.0
+    },
+    {
+      "batch": 2,
+      "block": 1,
+      "prefix_tokens": 128,
+      "forced_tokens_per_sequence": 64,
+      "prefill_seconds": 0.15201399999205023,
+      "decode_seconds": 1.018220208992716,
+      "sequence_tps": 62.854772901544166,
+      "aggregate_tps": 125.70954580308833,
+      "peak_mlx_gb": 1.334906882,
+      "max_abs_logits_vs_serial": 0.4159088134765625,
+      "top1_agreement_vs_serial": 1.0
+    },
+    {
+      "batch": 1,
+      "block": 1,
+      "prefix_tokens": 128,
+      "forced_tokens_per_sequence": 64,
+      "prefill_seconds": 0.07954554201569408,
+      "decode_seconds": 0.9736050830106251,
+      "sequence_tps": 65.73507176246075,
+      "aggregate_tps": 65.73507176246075,
+      "peak_mlx_gb": 1.258165742,
+      "max_abs_logits_vs_serial": 0.0,
+      "top1_agreement_vs_serial": 1.0
+    }
+  ],
+  "median": {
+    "batch_1_block_1": {
+      "decode_seconds": 1.0589667500171345,
+      "aggregate_tps": 60.8315360091227,
+      "sequence_tps": 60.8315360091227,
+      "peak_mlx_gb": 1.238750702
+    },
+    "batch_2_block_1": {
+      "decode_seconds": 1.102795208513271,
+      "aggregate_tps": 116.75540100133287,
+      "sequence_tps": 58.377700500666435,
+      "peak_mlx_gb": 1.334906894
+    },
+    "batch_4_block_1": {
+      "decode_seconds": 1.2078209994942881,
+      "aggregate_tps": 212.90012134024556,
+      "sequence_tps": 53.22503033506139,
+      "peak_mlx_gb": 1.520646154
+    },
+    "batch_1_block_2": {
+      "decode_seconds": 0.5493395834928378,
+      "aggregate_tps": 116.92117369789983,
+      "sequence_tps": 116.92117369789983,
+      "peak_mlx_gb": 1.258165742
+    },
+    "batch_1_block_4": {
+      "decode_seconds": 0.27679441700456664,
+      "aggregate_tps": 231.21947445243558,
+      "sequence_tps": 231.21947445243558,
+      "peak_mlx_gb": 1.258165742
+    },
+    "batch_1_block_8": {
+      "decode_seconds": 0.19725400049355812,
+      "aggregate_tps": 324.47849439184387,
+      "sequence_tps": 324.47849439184387,
+      "peak_mlx_gb": 1.258165742
+    }
+  }
+}

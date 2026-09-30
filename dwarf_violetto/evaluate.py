@@ -1,7 +1,6 @@
 """Local answer checks with saved completions. Not a competition benchmark."""
 import argparse
 import json
-import re
 import time
 from datetime import datetime, timezone
 from pathlib import Path
@@ -9,35 +8,10 @@ import mlx.core as mx
 from mlx_lm import stream_generate
 from mlx_lm.sample_utils import make_sampler
 from .runtime import load, prompt_tokens
-from .provenance import provenance
+from .provenance import provenance, package_versions, ROOT
 from .generation import output_budget, finish_reason
-
-
-def save(dest, result):
-    """Keep the last complete JSON record if generation is interrupted."""
-    temporary = dest.with_suffix(dest.suffix + ".tmp")
-    temporary.write_text(json.dumps(result, indent=2) + "\n")
-    temporary.replace(dest)
-
-
-def boxed(text):
-    starts = list(re.finditer(r"\\boxed\s*\{", text))
-    if not starts:
-        return None
-    start = starts[-1].end()
-    depth = 1
-    for end in range(start, len(text)):
-        depth += (text[end] == "{") - (text[end] == "}")
-        if depth == 0:
-            return text[start:end]
-    return None
-
-
-def normalize(value):
-    if value is None:
-        return None
-    value = re.sub(r"\\[dt]?frac\{(-?\d+)\}\{(\d+)\}", r"\1/\2", value)
-    return re.sub(r"[\s,$]", "", value)
+from .grading import boxed, normalize
+from .evaluation_state import save, validate_resume
 
 
 def main():
@@ -54,9 +28,16 @@ def main():
     args = p.parse_args()
     if args.max_tokens is not None and args.max_tokens < 1:
         p.error("An explicit output budget must be positive")
-    cases = json.loads(Path("data/math_checks.json").read_text())[:args.limit]
+    fixtures = json.loads((ROOT / "data/math_checks.json").read_text())
+    if not 1 <= args.limit <= len(fixtures):
+        p.error(f"Use a case limit from 1 to {len(fixtures)}")
+    cases = fixtures[:args.limit]
+    selected = set(args.only.split(",")) if args.only is not None else {c["id"] for c in cases}
+    if not selected or selected - {c["id"] for c in cases}:
+        p.error("--only must contain valid case IDs within the selected --limit")
     settings = {k: v for k, v in vars(args).items() if k not in {"resume", "output"}}
     result = {"settings": settings, "sha256": provenance(args.model),
+              "packages": package_versions(),
               "started_utc": datetime.now(timezone.utc).isoformat(),
               "sampling": {"temperature": 0.6, "top_p": 0.95},
               "suite": "12 hand-authored local checks, not held-out competition evaluation", "cases": []}
@@ -66,15 +47,17 @@ def main():
         if not args.resume:
             p.error("Output already exists; choose a new file or use --resume")
         previous = json.loads(dest.read_text())
-        if previous["settings"] != settings or previous["sha256"] != result["sha256"]:
-            p.error("Cannot resume with different settings, source, model config or fixtures")
+        try:
+            validate_resume(previous, result)
+        except ValueError as error:
+            p.error(str(error))
         result = previous
     model, tokenizer, _ = load(args.model, args.optimized, args.fused)
     result["context_length"] = model.args.max_position_embeddings
     result["output_policy"] = "eos_or_context_limit" if args.max_tokens is None else "explicit_cap"
     completed = {row["id"] for row in result["cases"]}
     for i, case in enumerate(cases):
-        if args.only and case["id"] not in args.only.split(","):
+        if case["id"] not in selected:
             continue
         if case["id"] in completed:
             continue

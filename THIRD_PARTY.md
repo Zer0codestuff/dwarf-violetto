@@ -1,6 +1,7 @@
 # Sources and attribution
 
 The model and original inference formulas are by Paradigma, under Apache-2.0.
+The root LICENSE retains Apache-2.0; NOTICE records the derived sources.
 
 - Model: https://huggingface.co/paradigma-inc/limite-1b-violetto
 - Model revision: `9402e422e87b220507963cd42c997459c1e87b43`
@@ -11,7 +12,9 @@ The model and original inference formulas are by Paradigma, under Apache-2.0.
 
 - https://huggingface.co/pierjoe/limite-1b-violetto-mlx-bf16
 - Reviewed revision: `ffa57c444fafdba0019c55d4f502bc6b9ddcc123`
-- Local changes: explicit MLX-LM imports, optional packed decode projections, prefill projections with original shapes, and optional compiled operations for experiments.
+- Local changes: explicit MLX-LM imports, optional packed decode projections,
+  prefill projections with original shapes, shared RoPE tables, compiled operation
+  hooks and explicit rejection of unsupported tied-head/precision configurations.
 
 MLX and MLX-LM are by Apple and their contributors, under MIT. They provide the Metal kernels, quantization, cache implementations, sampling, and token streaming. Their license files are installed with the packages.
 
@@ -22,3 +25,9 @@ Dwarf Star by Salvatore Sanfilippo and its contributors inspired the model-speci
 - https://github.com/antirez/ds4
 
 The local math checks are hand-authored project fixtures. They are not an official benchmark dataset.
+
+The pinned model and port cards declare Apache-2.0. The reviewed official source
+includes LICENSE and no NOTICE. Model weights are not bundled in this repository.
+`scripts/download.py` verifies the official weight SHA256 reported by Hugging Face
+for the pinned revision. Setup downloads third-party Python packages under their
+own licenses; their source is not vendored here.

@@ -1,4 +1,12 @@
 """Generation ends at EOS unless a caller requests a smaller output budget."""
+import math
+
+
+def validate_sampling(temperature, top_p):
+    if not math.isfinite(temperature) or temperature < 0:
+        raise ValueError("Temperature must be finite and nonnegative")
+    if not math.isfinite(top_p) or not 0 < top_p <= 1:
+        raise ValueError("Use a finite top-p with 0 < top-p <= 1")
 
 
 def output_budget(prompt_length, context_length, requested=None):

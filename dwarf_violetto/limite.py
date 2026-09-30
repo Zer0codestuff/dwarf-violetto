@@ -151,7 +151,7 @@ class ModelArgs(BaseModelArgs):
             "ve_head_slice": (self.ve_head_slice, {"first_num_key_value_heads"}),
             "lm_head_precision_mode": (
                 self.lm_head_precision_mode,
-                {"oracle_exact", "fp32_accumulate"},
+                {"oracle_exact"},
             ),
             "attn_gate_applied": (
                 self.attn_gate_applied,
@@ -165,6 +165,8 @@ class ModelArgs(BaseModelArgs):
                 )
         if self.rms_norm_has_weight:
             raise NotImplementedError("limite: RMSNorm carries no learnable gain.")
+        if not self.tie_word_embeddings:
+            raise NotImplementedError("limite: the vocabulary projection must share the input embedding.")
         if self.final_softcap:
             raise NotImplementedError("limite: pre-head tanh cap is not implemented.")
         if not self.global_nope:
@@ -362,6 +364,11 @@ class Attention(nn.Module):
             q, keys, vals, cache=cache, scale=self.scale, mask=mask
         )
         y = y.transpose(0, 2, 1, 3)  # [B, L, n_heads, head_dim]
+
+        fused_post = getattr(self, "_fused_post", None)
+        if fused_post is not None and L == 1:
+            y = fused_post(y, v, attn_in)
+            return self.o_proj(y.reshape(B, L, -1))
 
         if self.uses_xsa and getattr(self, "_fused_xsa", None) is not None:
             y = self._fused_xsa(y, v, self.xsa_alpha)
