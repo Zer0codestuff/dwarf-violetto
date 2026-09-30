@@ -78,10 +78,17 @@ distribution. Model weights, numerical arrays, research downloads, caches and
 environments remain outside Git. The [Apache redistribution conditions](https://www.apache.org/licenses/LICENSE-2.0)
 require retaining applicable notices and identifying modified files.
 
-The original local commits contain a personal author email. Preserve that local
-history and use GitHub's noreply identity in the reviewed publication copy.
-The repository destination and visibility still need the user's explicit choice.
-No GitHub repository has been created by this review.
+The user selected [Zer0codestuff/dwarf-violetto](https://github.com/Zer0codestuff/dwarf-violetto)
+as the public destination. The three reviewed commits were published with GitHub's
+noreply identity, preserving their file trees, messages and dates. Original
+history remains in a local archive, outside the published references. The primary
+working directory now tracks the public `main` branch.
+
+Private vulnerability reporting, Dependabot security updates, secret scanning and
+push protection are enabled. See [SECURITY.md](SECURITY.md) for reporting and
+[publication snapshot](results/publication-github.json) for the observed settings.
+Automated update proposals remain subject to review; CPU CI alone does not
+establish compatibility with the tested Metal runtime.
 
 ## Remaining limits
 
@@ -96,7 +103,9 @@ check reused one of them; the 24 complete historical responses were regraded,
 not all regenerated. Numerical comparisons cover a fixed 359-position corpus
 and repeated long-prefix traces. They do not replace a held-out evaluation.
 
-GitHub-hosted CI has been prepared and its commands passed locally without MLX.
-Its first hosted run can be checked after publication. CPU CI does not validate
-Metal inference. The experimental broad post-attention fusion remains rejected
-because its sampled trace changed.
+[GitHub-hosted CPU CI passed](https://github.com/Zer0codestuff/dwarf-violetto/actions/runs/36758586818)
+on publication commit `3037bd1ec97cd00b92a8267b4ee9edf14414a30a`, using
+Ubuntu and Python 3.12.14 without MLX or model weights. It checked all eight
+contracts, fixtures, repository artifacts, syntax and generated report freshness.
+CPU CI does not validate Metal inference. The experimental broad post-attention
+fusion remains rejected because its sampled trace changed.

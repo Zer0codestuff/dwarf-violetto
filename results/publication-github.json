@@ -1,0 +1,30 @@
+{
+  "review_date": "2026-09-30",
+  "repository": "https://github.com/Zer0codestuff/dwarf-violetto",
+  "visibility": "public",
+  "default_branch": "main",
+  "initial_publication_commit": "3037bd1ec97cd00b92a8267b4ee9edf14414a30a",
+  "public_author_email": "105509672+Zer0codestuff@users.noreply.github.com",
+  "original_history_preserved_locally": true,
+  "hosted_ci": {
+    "workflow": "Repository checks",
+    "run_id": 36758586818,
+    "url": "https://github.com/Zer0codestuff/dwarf-violetto/actions/runs/36758586818",
+    "head_sha": "3037bd1ec97cd00b92a8267b4ee9edf14414a30a",
+    "status": "completed",
+    "conclusion": "success",
+    "job": "cpu-checks",
+    "platform": "Ubuntu 24.04",
+    "python": "3.12.14",
+    "metal_inference": false
+  },
+  "repository_settings": {
+    "private_vulnerability_reporting": true,
+    "dependabot_security_updates": true,
+    "secret_scanning": true,
+    "secret_scanning_push_protection": true,
+    "wiki": false,
+    "projects": false
+  },
+  "scope": "Observed publication settings and initial hosted CPU CI; local Metal checks are recorded separately."
+}

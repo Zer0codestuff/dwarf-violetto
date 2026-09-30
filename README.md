@@ -1,5 +1,7 @@
 # Dwarf Violetto
 
+[![Repository checks](https://github.com/Zer0codestuff/dwarf-violetto/actions/workflows/checks.yml/badge.svg?branch=main)](https://github.com/Zer0codestuff/dwarf-violetto/actions/workflows/checks.yml)
+
 Local inference and measured optimizations for [Paradigma's Limite 1B Violetto](https://huggingface.co/paradigma-inc/limite-1b-violetto), targeting an Apple M4 MacBook Pro with 16 GB of unified memory. Python orchestrates execution; MLX runs the tensor operations on Metal.
 
 This is a model-specific MLX runtime, inspired by Dwarf Star's focus on measuring a narrow implementation. It is not a fork of Dwarf Star. The Limite architecture starts from Piergiorgio Di Pasquale's MLX port. See [THIRD_PARTY.md](THIRD_PARTY.md) for attribution and pinned revisions.
@@ -13,9 +15,11 @@ and about 8 GB of free disk space for the original checkpoint, Q8 and the Python
 environment. The tested machine is an M4 MacBook Pro with 16 GB memory, running
 macOS 27.0. Other Apple Silicon configurations are not benchmarked here.
 
-Clone or download this repository, enter its directory, then run:
+Clone this repository and run:
 
 ```sh
+git clone https://github.com/Zer0codestuff/dwarf-violetto.git
+cd dwarf-violetto
 ./setup
 ./violetto "How many positive divisors does 360 have?"
 ./violetto --interactive
@@ -171,3 +175,5 @@ are downloaded separately under Apache-2.0. This is an independent project; see
 [THIRD_PARTY.md](THIRD_PARTY.md) and [NOTICE](NOTICE) for attribution.
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for validation and measurement requirements.
+The [publication review](AUDIT.md) records the checks and remaining limits.
+Report security vulnerabilities through the private channel in [SECURITY.md](SECURITY.md).
