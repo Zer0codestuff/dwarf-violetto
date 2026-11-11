@@ -1,3 +1,3 @@
 # Optional CPU oracle, separate from the inference runtime.
 torch==2.13.0
-setuptools==83.0.0
+setuptools==84.1.0
